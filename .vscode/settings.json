@@ -1,7 +1,9 @@
 {
-  "cSpell.words": [
-    "artefacts",
-    "EPAM"
+  "cSpell.words": ["artefacts", "EPAM"],
+  "github.copilot.chat.commitMessageGeneration.instructions": [
+    {
+      "file": ".vscode/rules/git-message.md"
+    }
   ],
   "[csharp]": {
     "editor.defaultFormatter": "csharpier.csharpier-vscode"
