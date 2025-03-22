@@ -1,0 +1,11 @@
+<Solution>
+  <Configurations>
+    <Platform Name="Any CPU" />
+    <Platform Name="x64" />
+    <Platform Name="x86" />
+  </Configurations>
+  <Folder Name="/src/">
+    <Project Path="src/EPAM.Dial.Aspire.Hosting/EPAM.Dial.Aspire.Hosting.csproj" />
+    <Project Path="src/EPAM.Dial.Core.Sdk/EPAM.Dial.Core.Sdk.csproj" />
+  </Folder>
+</Solution>

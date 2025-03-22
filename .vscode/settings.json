@@ -1,0 +1,9 @@
+{
+  "cSpell.words": [
+    "artefacts",
+    "EPAM"
+  ],
+  "[csharp]": {
+    "editor.defaultFormatter": "csharpier.csharpier-vscode"
+  }
+}
