@@ -15,3 +15,17 @@ This repository contains .NET SDK for DIAL.
 | -------------------------- | ---------------------------------------------------------------------------------------------------------------------------- | ------------------ |
 | `Epam.Dial.Aspire.Hosting` | [![Nuget](https://img.shields.io/nuget/v/Epam.Dial.Aspire.Hosting.svg)](https://nuget.org/packages/Epam.Dial.Aspire.Hosting) | Aspire Integration |
 | `Epam.Dial.Core.Sdk`       | [![Nuget](https://img.shields.io/nuget/v/Epam.Dial.Aspire.Hosting.svg)](https://nuget.org/packages/Epam.Dial.Aspire.Hosting) | Core API Sdk       |
+
+
+## Scope
+
+* [ ] [Self-Hosted Models](https://docs.epam-rail.com/tutorials/quick-start-with-self-hosted-model)
+* [ ] [Adapters](https://docs.epam-rail.com/tutorials/quick-start-model)
+* [ ] [Applications](https://docs.epam-rail.com/tutorials/quick-start-with-application)
+* [ ] Core API Sdk
+
+## References
+
+* https://epam-rail.com
+* https://docs.epam-rail.com
+* https://github.com/epam/ai-dial

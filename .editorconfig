@@ -477,3 +477,11 @@ dotnet_diagnostic.IDE0022.severity = silent
 
 # CA1822: Mark members as static
 dotnet_diagnostic.CA1822.severity = suggestion
+
+# https://github.com/dennisdoomen/CSharpGuidelines/tree/5.7.0/_rules
+dotnet_diagnostic.AV1505.severity=none
+dotnet_diagnostic.AV2305.severity=none
+dotnet_diagnostic.AV1008.severity=none
+dotnet_diagnostic.AV1555.severity=none
+dotnet_diagnostic.AV1553.severity=none
+dotnet_diagnostic.AV1568.severity=none
