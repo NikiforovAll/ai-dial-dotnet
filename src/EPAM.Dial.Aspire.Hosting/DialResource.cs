@@ -22,7 +22,9 @@ public class DialResource(string name) : ContainerResource(name), IResourceWithC
     /// Gets the connection string expression for the Dial http endpoint.
     /// </summary>
     public ReferenceExpression ConnectionStringExpression =>
-        ReferenceExpression.Create($"{this.PrimaryEndpoint.Property(EndpointProperty.Url)}");
+        ReferenceExpression.Create(
+            $"Endpoint={this.PrimaryEndpoint.Property(EndpointProperty.Scheme)}://{this.PrimaryEndpoint.Property(EndpointProperty.Host)}:{this.PrimaryEndpoint.Property(EndpointProperty.Port)};Key=dial_api_key"
+        );
 
     private readonly Dictionary<string, DialModel> models = new(StringComparer.OrdinalIgnoreCase);
 
@@ -31,8 +33,8 @@ public class DialResource(string name) : ContainerResource(name), IResourceWithC
     /// </summary>
     public IReadOnlyDictionary<string, DialModel> Models => this.models;
 
-    internal void AddModel(string name, DialModel model)
+    internal void AddModel(DialModel model)
     {
-        this.models.TryAdd(name, model);
+        this.models.TryAdd(model.ModelName, model);
     }
 }

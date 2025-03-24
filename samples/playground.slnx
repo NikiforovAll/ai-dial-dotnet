@@ -1,3 +1,5 @@
 <Solution>
-  <Project Path="AppHost/AppHost.csproj" />
+  <Project Path="GettingStarted/AppHost/AppHost.csproj" />
+  <Project Path="GettingStarted/Api/Api.csproj" />
+  <Project Path="GettingStarted/ServiceDefaults/ServiceDefaults.csproj" />
 </Solution>

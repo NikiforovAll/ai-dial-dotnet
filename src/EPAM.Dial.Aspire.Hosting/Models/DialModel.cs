@@ -38,6 +38,9 @@ public class DialModel
     /// </summary>
     public string DisplayName { get; init; } = default!;
 
+    [JsonIgnore]
+    public string ModelName { get; set; } = default!;
+
     public string? Description { get; set; }
 
     /// <summary>

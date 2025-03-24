@@ -487,5 +487,6 @@ dotnet_diagnostic.AV1553.severity=none
 dotnet_diagnostic.AV1568.severity=none
 dotnet_diagnostic.AV1745.severity=none
 dotnet_diagnostic.AV1708.severity=none
+dotnet_diagnostic.AV1580.severity=none
 
 dotnet_diagnostic.AV1564.severity=warning

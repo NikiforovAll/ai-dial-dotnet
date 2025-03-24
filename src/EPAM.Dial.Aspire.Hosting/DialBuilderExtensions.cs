@@ -54,15 +54,22 @@ public static class DialBuilderExtensions
         return resource;
     }
 
-    public static IResourceBuilder<DialResource> AddModel(
+    public static IResourceBuilder<DialModelResource> AddModel(
         this IResourceBuilder<DialResource> builder,
         string name,
         DialModel model
     )
     {
-        builder.Resource.AddModel(name, model);
+        model.ModelName ??= name;
+        var modelResource = new DialModelResource(name, model.ModelName, builder.Resource);
 
-        return builder;
+        var modelBuilder = builder
+            .ApplicationBuilder.AddResource(modelResource)
+            .WithParentRelationship(builder.Resource);
+
+        builder.Resource.AddModel(model);
+
+        return modelBuilder;
     }
 
     private static Task<IEnumerable<ContainerFileSystemItem>> DialConfigFiles(DialResource dial) =>
