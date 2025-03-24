@@ -22,7 +22,7 @@ public static class AspireDialExtensions
     /// <param name="connectionName">A name used to retrieve the connection string from the ConnectionStrings configuration section.</param>
     /// <param name="configureSettings">An optional delegate that can be used for customizing options. It's invoked after the settings are read from the configuration.</param>
     /// <exception cref="UriFormatException">Thrown when no Dial endpoint is provided.</exception>
-    public static AspireDialApiClientBuilder AddDialApiClient(
+    public static AspireDialApiClientBuilder AddDialOpenAIClient(
         this IHostApplicationBuilder builder,
         string connectionName,
         Action<DialSettings>? configureSettings = null
@@ -45,7 +45,7 @@ public static class AspireDialExtensions
     /// <param name="connectionName">A name used to retrieve the connection string from the ConnectionStrings configuration section.</param>
     /// <param name="configureSettings">An optional delegate that can be used for customizing options. It's invoked after the settings are read from the configuration.</param>
     /// <exception cref="UriFormatException">Thrown when no Dial endpoint is provided.</exception>
-    public static AspireDialApiClientBuilder AddKeyedDialApiClient(
+    public static AspireDialApiClientBuilder AddKeyedDialOpenAIClient(
         this IHostApplicationBuilder builder,
         string connectionName,
         Action<DialSettings>? configureSettings = null

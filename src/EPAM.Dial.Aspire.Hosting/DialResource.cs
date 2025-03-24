@@ -35,6 +35,6 @@ public class DialResource(string name) : ContainerResource(name), IResourceWithC
 
     internal void AddModel(DialModel model)
     {
-        this.models.TryAdd(model.ModelName, model);
+        this.models.TryAdd(model.DeploymentName, model);
     }
 }

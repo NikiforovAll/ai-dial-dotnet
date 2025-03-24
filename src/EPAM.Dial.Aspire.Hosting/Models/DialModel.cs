@@ -39,7 +39,7 @@ public class DialModel
     public string DisplayName { get; init; } = default!;
 
     [JsonIgnore]
-    public string ModelName { get; set; } = default!;
+    public string DeploymentName { get; set; } = default!;
 
     public string? Description { get; set; }
 
@@ -47,7 +47,7 @@ public class DialModel
     /// The model endpoint.
     /// </summary>
     [JsonIgnore]
-    public Func<string> EndpointExpression { get; init; } = default!;
+    public Func<string> EndpointExpression { get; set; } = default!;
 
     public string Endpoint =>
         this.EndpointExpression?.Invoke() ?? throw new InvalidOperationException("EndpointExpression is not set.");
@@ -57,10 +57,18 @@ public class DialModel
     /// </summary>
     public Uri? IconUrl { get; set; }
 
-    public ICollection<ModelUpstream> Upstreams { get; set; } = [];
+    [JsonIgnore]
+    public ICollection<Func<ModelUpstream>> Upstreams { get; set; } = [];
+
+    [JsonPropertyName("upstreams")]
+    public ICollection<ModelUpstream> UpstreamsValue { get; set; } = [];
 
     internal static string ToJson(IReadOnlyDictionary<string, DialModel> models)
     {
+        foreach (var model in models.Values)
+        {
+            model.UpstreamsValue = [.. model.Upstreams.Select(upstream => upstream())];
+        }
         return JsonSerializer.Serialize(models, JsonSerializerOptions);
     }
 

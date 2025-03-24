@@ -8,16 +8,16 @@ AI **[DIAL](https://epam-rail.com/platform)** stands for **D**eterministic **I**
 
 This repository contains .NET SDK to simplify integration with DIAL platform.
 
-| Package                    | Version                                                                                                                      | Description        |
-| -------------------------- | ---------------------------------------------------------------------------------------------------------------------------- | ------------------ |
-| `Epam.Dial.Aspire.Hosting` | [![Nuget](https://img.shields.io/nuget/v/Epam.Dial.Aspire.Hosting.svg)](https://nuget.org/packages/Epam.Dial.Aspire.Hosting) | Aspire Integration |
-| `Epam.Dial.Aspire`         | [![Nuget](https://img.shields.io/nuget/v/Epam.Dial.Aspire.svg)](https://nuget.org/packages/Epam.Dial.Aspire)                 | Client Integration |
-| `Epam.Dial.Core.Sdk`       | [![Nuget](https://img.shields.io/nuget/v/Epam.Dial.Aspire.Hosting.svg)](https://nuget.org/packages/Epam.Dial.Aspire.Hosting) | Core API Sdk       |
+| Package                    | Version                                                                                                                      | Description               |
+| -------------------------- | ---------------------------------------------------------------------------------------------------------------------------- | ------------------------- |
+| `Epam.Dial.Aspire.Hosting` | [![Nuget](https://img.shields.io/nuget/v/Epam.Dial.Aspire.Hosting.svg)](https://nuget.org/packages/Epam.Dial.Aspire.Hosting) | Aspire Integration        |
+| `Epam.Dial.Aspire`         | [![Nuget](https://img.shields.io/nuget/v/Epam.Dial.Aspire.svg)](https://nuget.org/packages/Epam.Dial.Aspire)                 | Aspire Client Integration |
+| `Epam.Dial.Core.Sdk`       | [![Nuget](https://img.shields.io/nuget/v/Epam.Dial.Aspire.Hosting.svg)](https://nuget.org/packages/Epam.Dial.Aspire.Hosting) | Core API Sdk              |
 
 ---
 
 > [!NOTE]
-> I do not represent EPAM DIAL. This is a personal project to simplify integration with DIAL platform because I find it useful. 
+> I do not represent EPAM DIAL. This is a personal project to simplify integration with DIAL platform. 
 
 ## Features
 
@@ -31,11 +31,10 @@ Install hosting integration for your project:
 dotnet add package EPAM.Dial.Aspire.Hosting
 ```
 
-Modify `AppHost.cs`:
-
 The code below shows how to create a simple DIAL installation configured to work with two locally installed models: `DeepSeek-R1` and `Phi-3.5`. 
 
 ```csharp
+// AppHost/Program.cs
 var builder = DistributedApplication.CreateBuilder(args);
 
 var ollama = builder
@@ -70,13 +69,32 @@ Here is the output from Aspire Dashboard. It shows *Aspire Resources Component G
 
 ### DIAL Chat
 
+AI DIAL Chat is a powerful enterprise-grade application that serves as a default web interface for AI DIAL users, providing access to the full set of AI DIAL features.
 
 The great thing about DIAL Chat is that it allows you to run multiple models in parallel. This means you can compare the performance of different models and choose the best one for your use case. 
 
 For example, you can run `DeepSeek-R1` and `Phi-3.5` models in parallel and compare their output:
 
-
 ![Aspire Chat Demo](./assets/demo/compare-models-demo.png)
+
+See [Chat User Guide](https://docs.epam-rail.com/user-guide) for more information.
+
+
+### DIAL Marketplace
+
+DIAL Marketplace is a comprehensive hub for all applications, language models, and GenAI assistants available in the DIAL environment of your organization.
+
+![Aspire Chat Demo](./assets/demo/marketplace-demo.png)
+
+**Collaboration Center:**
+DIAL Marketplace is a powerful platform for fostering collaboration within organizations. It encourages the creation and publishing of custom applications, models, and assistants, thereby enhancing knowledge sharing and fostering GenAI experimentation. As a GenAI collaboration hub, DIAL Marketplace empowers your entire organization, while maintaining all required permissions and roles.
+
+**Development Studio:**
+Another powerful feature of DIAL Marketplace is its functionality as a development studio, facilitating the rapid creation of low-code quick apps and providing access to a full-scale Integrated Development Environment (IDE) for code app development and deployment.
+
+
+
+See [DIAL Marketplace](https://docs.epam-rail.com/marketplace) for more information.
 
 ### Client Integration with Aspire
 
@@ -94,7 +112,7 @@ And modify `Program.cs`:
 var builder = WebApplication.CreateBuilder(args);
 
 builder.AddServiceDefaults();
-builder.AddDialApiClient("deepseek").AddChatClient();
+builder.AddDialOpenAIClient("deepseek").AddChatClient();
 
 var app = builder.Build();
 
@@ -118,14 +136,19 @@ app.Run();
 * [X] [Self-Hosted Models](https://docs.epam-rail.com/tutorials/quick-start-with-self-hosted-model)
 * [X] [Microsoft.Extensions.AI](https://learn.microsoft.com/en-us/dotnet/ai/ai-extensions) + Client Integration
 * [X] Demo: API -> DIAL, DIAL Chat -> DIAL
-* [ ] Configure [Applications](https://docs.epam-rail.com/tutorials/quick-start-with-application)
-* [ ] Configure [Adapters](https://docs.epam-rail.com/tutorials/quick-start-model)
+* [X] Azure OpenAI Adapter
+* [X] MVP Configure [Adapters](https://docs.epam-rail.com/tutorials/quick-start-model)
+* [ ] Quick App
+* [ ] Python Application + Aspire (Docker alternative?)
+* [ ] .NET Application (.NET SDK) + Aspire
+* [ ] docs for marketplace
+* [ ] add docs link to DIAL docs (for more information)
+* [ ] MVP Configure [Applications](https://docs.epam-rail.com/tutorials/quick-start-with-application)
 * [ ] MVP release should be based on [Aspire 9.2.0](https://www.nuget.org/packages/Aspire.Hosting)
-* [ ] Python Application + Aspire
-* [ ] .NET Application + Aspire
 * [ ] Core API Sdk
 * [ ] List DIAL configuration resource command
-* [ ] Make configuration flexible and extensible
+* [ ] Make configuration flexible and extensible, should be open for extension
+* [ ] Use package version same as DIAL Core
 
 ## References
 

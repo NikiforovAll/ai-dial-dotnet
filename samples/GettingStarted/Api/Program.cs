@@ -5,7 +5,7 @@ var builder = WebApplication.CreateBuilder(args);
 
 builder.AddServiceDefaults();
 
-builder.AddDialApiClient("deepseek").AddChatClient();
+builder.AddDialOpenAIClient("deepseek").AddChatClient();
 
 var app = builder.Build();
 

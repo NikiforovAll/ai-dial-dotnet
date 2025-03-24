@@ -54,14 +54,48 @@ public static class DialBuilderExtensions
         return resource;
     }
 
+    public static IResourceBuilder<DialModelAdapterResource> AddOpenAIModelAdapter(
+        this IResourceBuilder<DialResource> builder,
+        string name,
+        DialModel model
+    )
+    {
+        return builder.AddModelAdapter(name, "epam/ai-dial-adapter-openai:0.22.0", model);
+    }
+
+    public static IResourceBuilder<DialModelAdapterResource> AddModelAdapter(
+        this IResourceBuilder<DialResource> builder,
+        string name,
+        string adapter,
+        DialModel model
+    )
+    {
+        model.DeploymentName ??= name;
+        var modelResource = new DialModelAdapterResource(name, model.DeploymentName, builder.Resource);
+
+        var modelBuilder = builder
+            .ApplicationBuilder.AddResource(modelResource)
+            .WithImage(adapter)
+            .WithHttpEndpoint(port: null, targetPort: 5000, DialResource.PrimaryEndpointName)
+            .WithEnvironment("WEB_CONCURRENCY", "3")
+            .WithParentRelationship(builder.Resource);
+
+        var adapterResource = modelBuilder.Resource;
+        model.EndpointExpression = () =>
+            $"{adapterResource.PrimaryEndpoint.Scheme}://{adapterResource.Name}:{adapterResource.PrimaryEndpoint.TargetPort}/openai/deployments/{model.DeploymentName}/chat/completions";
+        builder.Resource.AddModel(model);
+
+        return modelBuilder;
+    }
+
     public static IResourceBuilder<DialModelResource> AddModel(
         this IResourceBuilder<DialResource> builder,
         string name,
         DialModel model
     )
     {
-        model.ModelName ??= name;
-        var modelResource = new DialModelResource(name, model.ModelName, builder.Resource);
+        model.DeploymentName ??= name;
+        var modelResource = new DialModelResource(name, model.DeploymentName, builder.Resource);
 
         var modelBuilder = builder
             .ApplicationBuilder.AddResource(modelResource)
