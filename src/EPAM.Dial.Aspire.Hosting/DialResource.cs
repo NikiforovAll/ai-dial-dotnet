@@ -1,6 +1,7 @@
 namespace Aspire.Hosting;
 
 using Aspire.Hosting.ApplicationModel;
+using EPAM.Dial.Aspire.Hosting.Models;
 
 /// <summary>
 /// A resource that represents an Dial server
@@ -22,4 +23,16 @@ public class DialResource(string name) : ContainerResource(name), IResourceWithC
     /// </summary>
     public ReferenceExpression ConnectionStringExpression =>
         ReferenceExpression.Create($"{this.PrimaryEndpoint.Property(EndpointProperty.Url)}");
+
+    private readonly Dictionary<string, DialModel> models = new(StringComparer.OrdinalIgnoreCase);
+
+    /// <summary>
+    /// A dictionary where the key is the resource name and the value is the database name.
+    /// </summary>
+    public IReadOnlyDictionary<string, DialModel> Models => this.models;
+
+    internal void AddModel(string name, DialModel model)
+    {
+        this.models.TryAdd(name, model);
+    }
 }

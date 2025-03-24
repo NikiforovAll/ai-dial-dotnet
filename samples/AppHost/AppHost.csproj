@@ -9,7 +9,7 @@
 
   <ItemGroup>
     <PackageReference Include="Aspire.Hosting.AppHost" Version="9.2.0-preview.1.25172.1" />
-    <PackageReference Include="CommunityToolkit.Aspire.Hosting.Ollama" Version="9.3.0" />
+    <PackageReference Include="CommunityToolkit.Aspire.Hosting.Ollama" Version="9.1.0" />
   </ItemGroup>
 
   <ItemGroup>

@@ -2,6 +2,7 @@ namespace Aspire.Hosting;
 
 using Aspire.Hosting.ApplicationModel;
 using EPAM.Dial.Aspire.Hosting;
+using EPAM.Dial.Aspire.Hosting.Models;
 
 /// <summary>
 /// Provides extension methods for adding Dial to the application model.
@@ -23,6 +24,7 @@ public static class DialBuilderExtensions
             .AddRedis($"{dial.Name}-cache")
             .WithImage("redis:7.2.4-alpine3.19")
             .WithParentRelationship(dial);
+
         var resource = builder
             .AddResource(dial)
             .WithImage(DialContainerImageTags.Image, DialContainerImageTags.Tag)
@@ -45,15 +47,25 @@ public static class DialBuilderExtensions
                     $"redis://{cache.Resource.Name}:{cache.Resource.PrimaryEndpoint.TargetPort}"
                 );
             })
-            .WithContainerFiles(destinationPath: "/opt", callback: (_, _) => DialConfigFiles())
+            .WithContainerFiles(destinationPath: "/opt", callback: (_, _) => DialConfigFiles(dial))
             .WaitFor(cache)
-            .WithReference(cache)
             .PublishAsContainer();
 
         return resource;
     }
 
-    private static Task<IEnumerable<ContainerFileSystemItem>> DialConfigFiles() =>
+    public static IResourceBuilder<DialResource> AddModel(
+        this IResourceBuilder<DialResource> builder,
+        string name,
+        DialModel model
+    )
+    {
+        builder.Resource.AddModel(name, model);
+
+        return builder;
+    }
+
+    private static Task<IEnumerable<ContainerFileSystemItem>> DialConfigFiles(DialResource dial) =>
         Task.FromResult<IEnumerable<ContainerFileSystemItem>>(
             [
                 new ContainerDirectory
@@ -109,11 +121,11 @@ public static class DialBuilderExtensions
                         {
                             Name = "config.json",
                             Contents = /*lang=json,strict*/
-                            """
+                            $$"""
                             {
                                 "routes": {},
                                 "applications": {},
-                                "models": {},
+                                "models": {{DialModel.ToJson(dial.Models)}},
                                 "keys": {
                                     "dial_api_key": {
                                         "project": "TEST-PROJECT",
@@ -122,9 +134,7 @@ public static class DialBuilderExtensions
                                 },
                                 "roles": {
                                     "default": {
-                                        "limits": {
-                                            "echo": {}
-                                        }
+                                        "limits": {{DialModel.ToLimitsJson(dial.Models)}}
                                     }
                                 }
                             }
@@ -136,7 +146,25 @@ public static class DialBuilderExtensions
         );
 
     /// <summary>
-    /// Adds an Chat DIAL
+    /// Adds a data volume to the DIAL container.
+    /// </summary>
+    /// <param name="builder">The <see cref="IResourceBuilder{T}"/>.</param>
+    /// <param name="name">The name of the volume. Defaults to an auto-generated name based on the application and resource names.</param>
+    /// <param name="isReadOnly">A flag that indicates if this is a read-only volume.</param>
+    /// <returns>A reference to the <see cref="IResourceBuilder{T}"/>.</returns>
+    public static IResourceBuilder<DialResource> WithDataVolume(
+        this IResourceBuilder<DialResource> builder,
+        string? name = null,
+        bool isReadOnly = false
+    )
+    {
+        ArgumentNullException.ThrowIfNull(builder);
+
+        return builder.WithVolume(name ?? VolumeNameGenerator.Generate(builder, "dial"), "/app/data", isReadOnly);
+    }
+
+    /// <summary>
+    /// Adds a Chat DIAL
     /// </summary>
     public static IResourceBuilder<T> WithChatUI<T>(
         this IResourceBuilder<T> builder,
