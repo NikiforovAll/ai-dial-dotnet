@@ -1,5 +1,12 @@
 <Solution>
-  <Project Path="GettingStarted/AppHost/AppHost.csproj" />
-  <Project Path="GettingStarted/Api/Api.csproj" />
-  <Project Path="GettingStarted/ServiceDefaults/ServiceDefaults.csproj" />
+  <Folder Name="/GettingStarted/">
+    <Project Path="GettingStarted/Api/Api.csproj" />
+    <Project Path="GettingStarted/AppHost/AppHost.csproj" />
+    <Project Path="GettingStarted/ServiceDefaults/ServiceDefaults.csproj" />
+  </Folder>
+  <Folder Name="/GettingStarted_OpenAI/">
+    <Project Path="GettingStarted_OpenAI/Api/Api.csproj" />
+    <Project Path="GettingStarted_OpenAI/AppHost/AppHost.csproj" />
+    <Project Path="GettingStarted_OpenAI/ServiceDefaults/ServiceDefaults.csproj" />
+  </Folder>
 </Solution>

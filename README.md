@@ -1,10 +1,12 @@
-# EPAM DIAL .NET SDK
+# EPAM DIAL .NET SDK (Preview)
 
 [![Build](https://github.com/NikiforovAll/epam-dial-dotnet/actions/workflows/build.yml/badge.svg?branch=main)](https://github.com/NikiforovAll/epam-dial-dotnet/actions/workflows/build.yml)
 
 ## What is DIAL?
 
 AI **[DIAL](https://epam-rail.com/platform)** stands for **D**eterministic **I**ntegrator of **A**pplications and **L**anguage Models. It is an enterprise-grade, open-source AI orchestration platform that simplifies the development, deployment, and management of AI-driven applications. AI DIAL acts as both a development studio and an application server, enabling seamless integration between various AI models, data pipelines, and business applications.
+
+See: [DIAL 2.0: The Open Source AI Orchestration Platform Overview - YouTube](https://www.youtube.com/watch?v=Ud2UyXjNK4I&list=PLhkKkML8gp_fNs5NQdztKwIr2yWnLoQfy&index=1)
 
 This repository contains .NET SDK to simplify integration with DIAL platform.
 
@@ -67,6 +69,9 @@ Here is the output from Aspire Dashboard. It shows *Aspire Resources Component G
 
 ![Aspire Graph Demo](./assets/demo/aspire-graph-demo.png)
 
+💡 You are not limited to only self-hosted models. AI DIAL allows you to access models from all major LLM providers, language models from the open-source community, alternative vendors, and fine-tuned micro models, as well as self-hosted or models listed on HuggingFace or DeepSeek.
+See [Supported Models](https://docs.dialx.ai/platform/supported-models) for more information.
+
 ### DIAL Chat
 
 AI DIAL Chat is a powerful enterprise-grade application that serves as a default web interface for AI DIAL users, providing access to the full set of AI DIAL features.
@@ -91,8 +96,6 @@ DIAL Marketplace is a powerful platform for fostering collaboration within organ
 
 **Development Studio:**
 Another powerful feature of DIAL Marketplace is its functionality as a development studio, facilitating the rapid creation of low-code quick apps and providing access to a full-scale Integrated Development Environment (IDE) for code app development and deployment.
-
-
 
 See [DIAL Marketplace](https://docs.epam-rail.com/marketplace) for more information.
 
@@ -130,25 +133,6 @@ app.MapDefaultEndpoints();
 
 app.Run();
 ```
-
-## Scope
-
-* [X] [Self-Hosted Models](https://docs.epam-rail.com/tutorials/quick-start-with-self-hosted-model)
-* [X] [Microsoft.Extensions.AI](https://learn.microsoft.com/en-us/dotnet/ai/ai-extensions) + Client Integration
-* [X] Demo: API -> DIAL, DIAL Chat -> DIAL
-* [X] Azure OpenAI Adapter
-* [X] MVP Configure [Adapters](https://docs.epam-rail.com/tutorials/quick-start-model)
-* [ ] Quick App
-* [ ] Python Application + Aspire (Docker alternative?)
-* [ ] .NET Application (.NET SDK) + Aspire
-* [ ] docs for marketplace
-* [ ] add docs link to DIAL docs (for more information)
-* [ ] MVP Configure [Applications](https://docs.epam-rail.com/tutorials/quick-start-with-application)
-* [ ] MVP release should be based on [Aspire 9.2.0](https://www.nuget.org/packages/Aspire.Hosting)
-* [ ] Core API Sdk
-* [ ] List DIAL configuration resource command
-* [ ] Make configuration flexible and extensible, should be open for extension
-* [ ] Use package version same as DIAL Core
 
 ## References
 
