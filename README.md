@@ -1,4 +1,4 @@
-# EPAM DIAL .NET SDK (Preview)
+# EPAM DIAL .NET SDK (Preview 🚧)
 
 [![Build](https://github.com/NikiforovAll/epam-dial-dotnet/actions/workflows/build.yml/badge.svg?branch=main)](https://github.com/NikiforovAll/epam-dial-dotnet/actions/workflows/build.yml)
 
@@ -10,11 +10,14 @@ See: [DIAL 2.0: The Open Source AI Orchestration Platform Overview - YouTube](ht
 
 This repository contains .NET SDK to simplify integration with DIAL platform.
 
+
+> NB: The EPAM.Dial.* packages  are in preview and are subject to change. The preview version will be release somewhere after Aspire 9.2 release.
+
 | Package                    | Version                                                                                                                      | Description               |
 | -------------------------- | ---------------------------------------------------------------------------------------------------------------------------- | ------------------------- |
 | `Epam.Dial.Aspire.Hosting` | [![Nuget](https://img.shields.io/nuget/v/Epam.Dial.Aspire.Hosting.svg)](https://nuget.org/packages/Epam.Dial.Aspire.Hosting) | Aspire Integration        |
 | `Epam.Dial.Aspire`         | [![Nuget](https://img.shields.io/nuget/v/Epam.Dial.Aspire.svg)](https://nuget.org/packages/Epam.Dial.Aspire)                 | Aspire Client Integration |
-| `Epam.Dial.Core.Sdk`       | [![Nuget](https://img.shields.io/nuget/v/Epam.Dial.Aspire.Hosting.svg)](https://nuget.org/packages/Epam.Dial.Aspire.Hosting) | Core API Sdk              |
+| `Epam.Dial.Core.Sdk`       | [![Nuget](https://img.shields.io/nuget/v/Epam.Dial.Aspire.Hosting.svg)](https://nuget.org/packages/Epam.Dial.Core.Sdk)       | Core API Sdk              |
 
 ---
 

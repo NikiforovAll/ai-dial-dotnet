@@ -16,3 +16,4 @@
 * [ ] List DIAL configuration resource command
 * [ ] Make configuration flexible and extensible, should be open for extension
 * [ ] Use package version same as DIAL Core
+* [ ] Rename namespace to EPAM.DIAL
