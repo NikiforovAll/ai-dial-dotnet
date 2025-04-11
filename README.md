@@ -11,13 +11,13 @@ See: [DIAL 2.0: The Open Source AI Orchestration Platform Overview - YouTube](ht
 This repository contains .NET SDK to simplify integration with DIAL platform.
 
 
-> NB: The EPAM.Dial.* packages  are in preview and are subject to change. The preview version will be release somewhere after Aspire 9.2 release.
+> NB: The EPAM.DIAL.* packages  are in preview and are subject to change. The preview version will be release somewhere after Aspire 9.2 release.
 
 | Package                    | Version                                                                                                                      | Description               |
 | -------------------------- | ---------------------------------------------------------------------------------------------------------------------------- | ------------------------- |
-| `Nall.Epam.Dial.Aspire.Hosting` | [![Nuget](https://img.shields.io/nuget/v/Nall.Epam.Dial.Aspire.Hosting.svg)](https://nuget.org/packages/Nall.Epam.Dial.Aspire.Hosting) | Aspire Integration        |
-| `Nall.Epam.Dial.Aspire`         | [![Nuget](https://img.shields.io/nuget/v/Nall.Epam.Dial.Aspire.svg)](https://nuget.org/packages/Nall.Epam.Dial.Aspire)                 | Aspire Client Integration |
-<!-- | `Epam.Dial.Core.Sdk`       | [![Nuget](https://img.shields.io/nuget/v/Nall.Epam.Dial.Aspire.Hosting.svg)](https://nuget.org/packages/Epam.Dial.Core.Sdk)       | Core API Sdk              | -->
+| `Nall.EPAM.DIAL.Aspire.Hosting` | [![Nuget](https://img.shields.io/nuget/v/Nall.EPAM.DIAL.Aspire.Hosting.svg)](https://nuget.org/packages/Nall.EPAM.DIAL.Aspire.Hosting) | Aspire Integration        |
+| `Nall.EPAM.DIAL.Aspire`         | [![Nuget](https://img.shields.io/nuget/v/Nall.EPAM.DIAL.Aspire.svg)](https://nuget.org/packages/Nall.EPAM.DIAL.Aspire)                 | Aspire Client Integration |
+<!-- | `EPAM.DIAL.Core.Sdk`       | [![Nuget](https://img.shields.io/nuget/v/Nall.EPAM.DIAL.Aspire.Hosting.svg)](https://nuget.org/packages/EPAM.DIAL.Core.Sdk)       | Core API Sdk              | -->
 
 ---
 
@@ -33,7 +33,7 @@ This repository contains .NET SDK to simplify integration with DIAL platform.
 Install hosting integration for your project:
 
 ```bash
-dotnet add package Nall.EPAM.Dial.Aspire.Hosting
+dotnet add package Nall.EPAM.DIAL.Aspire.Hosting
 ```
 
 The code below shows how to create a simple DIAL installation configured to work with two locally installed models: `DeepSeek-R1` and `Phi-3.5`. 
@@ -109,7 +109,7 @@ You can use DIAL Core API to programmatically interact with DIAL. This is useful
 For example, you can consume DIAL Completion API to get completions from a model: 
 
 ```bash
-dotnet add package EPAM.Dial.Aspire
+dotnet add package Nall.EPAM.DIAL.Aspire
 ```
 
 And modify `Program.cs`:
