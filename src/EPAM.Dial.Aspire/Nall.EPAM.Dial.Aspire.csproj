@@ -6,6 +6,12 @@
     <Nullable>enable</Nullable>
   </PropertyGroup>
 
+  <PropertyGroup Label="Package">
+    <Product>Nall.Epam.Dial.Aspire</Product>
+    <Description>Aspire support for EPAM Dial</Description>
+    <PackageTags>$(PackageTags);aspire;cloud-native</PackageTags>
+  </PropertyGroup>
+
   <ItemGroup>
     <PackageReference Include="Microsoft.Extensions.AI" />
     <PackageReference Include="Microsoft.Extensions.AI.OpenAI" />

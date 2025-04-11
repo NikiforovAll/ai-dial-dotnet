@@ -15,9 +15,9 @@ This repository contains .NET SDK to simplify integration with DIAL platform.
 
 | Package                    | Version                                                                                                                      | Description               |
 | -------------------------- | ---------------------------------------------------------------------------------------------------------------------------- | ------------------------- |
-| `Epam.Dial.Aspire.Hosting` | [![Nuget](https://img.shields.io/nuget/v/Epam.Dial.Aspire.Hosting.svg)](https://nuget.org/packages/Epam.Dial.Aspire.Hosting) | Aspire Integration        |
-| `Epam.Dial.Aspire`         | [![Nuget](https://img.shields.io/nuget/v/Epam.Dial.Aspire.svg)](https://nuget.org/packages/Epam.Dial.Aspire)                 | Aspire Client Integration |
-<!-- | `Epam.Dial.Core.Sdk`       | [![Nuget](https://img.shields.io/nuget/v/Epam.Dial.Aspire.Hosting.svg)](https://nuget.org/packages/Epam.Dial.Core.Sdk)       | Core API Sdk              | -->
+| `Nall.Epam.Dial.Aspire.Hosting` | [![Nuget](https://img.shields.io/nuget/v/Nall.Epam.Dial.Aspire.Hosting.svg)](https://nuget.org/packages/Nall.Epam.Dial.Aspire.Hosting) | Aspire Integration        |
+| `Nall.Epam.Dial.Aspire`         | [![Nuget](https://img.shields.io/nuget/v/Nall.Epam.Dial.Aspire.svg)](https://nuget.org/packages/Nall.Epam.Dial.Aspire)                 | Aspire Client Integration |
+<!-- | `Epam.Dial.Core.Sdk`       | [![Nuget](https://img.shields.io/nuget/v/Nall.Epam.Dial.Aspire.Hosting.svg)](https://nuget.org/packages/Epam.Dial.Core.Sdk)       | Core API Sdk              | -->
 
 ---
 
@@ -33,7 +33,7 @@ This repository contains .NET SDK to simplify integration with DIAL platform.
 Install hosting integration for your project:
 
 ```bash
-dotnet add package EPAM.Dial.Aspire.Hosting
+dotnet add package Nall.EPAM.Dial.Aspire.Hosting
 ```
 
 The code below shows how to create a simple DIAL installation configured to work with two locally installed models: `DeepSeek-R1` and `Phi-3.5`. 

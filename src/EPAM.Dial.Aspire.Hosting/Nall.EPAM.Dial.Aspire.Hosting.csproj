@@ -1,7 +1,7 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup Label="Package">
-    <Product>Epam.Dial.Aspire.Hosting</Product>
+    <Product>Nall.Epam.Dial.Aspire.Hosting</Product>
     <Description>Aspire support for EPAM Dial</Description>
     <PackageTags>$(PackageTags);aspire;cloud-native</PackageTags>
   </PropertyGroup>

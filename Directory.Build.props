@@ -21,6 +21,7 @@
   <PropertyGroup Label="MinVer">
     <MinVerVerbosity>normal</MinVerVerbosity>
     <MinVerDefaultPreReleaseIdentifiers>preview.0</MinVerDefaultPreReleaseIdentifiers>
+    <MinVerTagPrefix>v</MinVerTagPrefix>
   </PropertyGroup>
 
   <ItemGroup>

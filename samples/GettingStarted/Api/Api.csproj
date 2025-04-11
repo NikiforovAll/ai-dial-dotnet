@@ -5,7 +5,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\..\..\src\EPAM.Dial.Aspire\EPAM.Dial.Aspire.csproj" />
+    <ProjectReference Include="..\..\..\src\EPAM.Dial.Aspire\Nall.EPAM.Dial.Aspire.csproj" />
     <ProjectReference Include="..\ServiceDefaults\ServiceDefaults.csproj" />
   </ItemGroup>
 
