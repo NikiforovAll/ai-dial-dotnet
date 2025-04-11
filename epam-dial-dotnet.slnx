@@ -6,5 +6,6 @@
   </Configurations>
   <Folder Name="/src/">
     <Project Path="src/EPAM.Dial.Aspire.Hosting/EPAM.Dial.Aspire.Hosting.csproj" />
+    <Project Path="src/EPAM.Dial.Aspire/EPAM.Dial.Aspire.csproj" />
   </Folder>
 </Solution>

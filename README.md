@@ -17,7 +17,7 @@ This repository contains .NET SDK to simplify integration with DIAL platform.
 | -------------------------- | ---------------------------------------------------------------------------------------------------------------------------- | ------------------------- |
 | `Epam.Dial.Aspire.Hosting` | [![Nuget](https://img.shields.io/nuget/v/Epam.Dial.Aspire.Hosting.svg)](https://nuget.org/packages/Epam.Dial.Aspire.Hosting) | Aspire Integration        |
 | `Epam.Dial.Aspire`         | [![Nuget](https://img.shields.io/nuget/v/Epam.Dial.Aspire.svg)](https://nuget.org/packages/Epam.Dial.Aspire)                 | Aspire Client Integration |
-| `Epam.Dial.Core.Sdk`       | [![Nuget](https://img.shields.io/nuget/v/Epam.Dial.Aspire.Hosting.svg)](https://nuget.org/packages/Epam.Dial.Core.Sdk)       | Core API Sdk              |
+<!-- | `Epam.Dial.Core.Sdk`       | [![Nuget](https://img.shields.io/nuget/v/Epam.Dial.Aspire.Hosting.svg)](https://nuget.org/packages/Epam.Dial.Core.Sdk)       | Core API Sdk              | -->
 
 ---
 
@@ -136,6 +136,10 @@ app.MapDefaultEndpoints();
 
 app.Run();
 ```
+
+## Blogs
+
+- [Introducing AI DIAL: The Open-Source AI Orchestration Platform](https://nikiforovall.github.io/dotnet/ai/2025/03/30/introduction-to-dial.html)
 
 ## References
 

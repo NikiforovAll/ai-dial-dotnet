@@ -33,77 +33,34 @@ public static class DialBuilderExtensions
             .WithEnvironment(context =>
             {
                 context.EnvironmentVariables.Add("AIDIAL_SETTINGS", "/opt/settings/settings.json");
-                context.EnvironmentVariables.Add("JAVA_OPTS", "-Dgflog.config=/opt/settings/gflog.xml");
+                context.EnvironmentVariables.Add(
+                    "JAVA_OPTS",
+                    "-Dgflog.config=/opt/settings/gflog.xml"
+                );
                 context.EnvironmentVariables.Add("LOG_DIR", "/app/log");
                 context.EnvironmentVariables.Add("STORAGE_DIR", "/app/data");
-                context.EnvironmentVariables.Add("aidial.config.files", "[\"/opt/settings/config.json\"]");
+                context.EnvironmentVariables.Add(
+                    "aidial.config.files",
+                    "[\"/opt/settings/config.json\"]"
+                );
                 context.EnvironmentVariables.Add(
                     "aidial.storage.overrides",
                     /*lang=json,strict*/
                     "{ \"jclouds.filesystem.basedir\": \"data\" }"
                 );
+                var redisConnectionString =
+                    $"redis://:{cache.Resource.PasswordParameter!.Value}@{cache.Resource.Name}:{cache.Resource.PrimaryEndpoint.TargetPort}";
                 context.EnvironmentVariables.Add(
                     "aidial.redis.singleServerConfig.address",
-                    $"redis://{cache.Resource.Name}:{cache.Resource.PrimaryEndpoint.TargetPort}"
+                    redisConnectionString
                 );
             })
+            .WithReference(cache)
             .WithContainerFiles(destinationPath: "/opt", callback: (_, _) => DialConfigFiles(dial))
             .WaitFor(cache)
             .PublishAsContainer();
 
         return resource;
-    }
-
-    public static IResourceBuilder<DialModelAdapterResource> AddOpenAIModelAdapter(
-        this IResourceBuilder<DialResource> builder,
-        string name,
-        DialModel model
-    )
-    {
-        return builder.AddModelAdapter(name, "epam/ai-dial-adapter-openai:0.22.0", model);
-    }
-
-    public static IResourceBuilder<DialModelAdapterResource> AddModelAdapter(
-        this IResourceBuilder<DialResource> builder,
-        string name,
-        string adapter,
-        DialModel model
-    )
-    {
-        model.DeploymentName ??= name;
-        var modelResource = new DialModelAdapterResource(name, model.DeploymentName, builder.Resource);
-
-        var modelBuilder = builder
-            .ApplicationBuilder.AddResource(modelResource)
-            .WithImage(adapter)
-            .WithHttpEndpoint(port: null, targetPort: 5000, DialResource.PrimaryEndpointName)
-            .WithEnvironment("WEB_CONCURRENCY", "3")
-            .WithParentRelationship(builder.Resource);
-
-        var adapterResource = modelBuilder.Resource;
-        model.EndpointExpression = () =>
-            $"{adapterResource.PrimaryEndpoint.Scheme}://{adapterResource.Name}:{adapterResource.PrimaryEndpoint.TargetPort}/openai/deployments/{model.DeploymentName}/chat/completions";
-        builder.Resource.AddModel(model);
-
-        return modelBuilder;
-    }
-
-    public static IResourceBuilder<DialModelResource> AddModel(
-        this IResourceBuilder<DialResource> builder,
-        string name,
-        DialModel model
-    )
-    {
-        model.DeploymentName ??= name;
-        var modelResource = new DialModelResource(name, model.DeploymentName, builder.Resource);
-
-        var modelBuilder = builder
-            .ApplicationBuilder.AddResource(modelResource)
-            .WithParentRelationship(builder.Resource);
-
-        builder.Resource.AddModel(model);
-
-        return modelBuilder;
     }
 
     private static Task<IEnumerable<ContainerFileSystemItem>> DialConfigFiles(DialResource dial) =>
@@ -201,7 +158,11 @@ public static class DialBuilderExtensions
     {
         ArgumentNullException.ThrowIfNull(builder);
 
-        return builder.WithVolume(name ?? VolumeNameGenerator.Generate(builder, "dial"), "/app/data", isReadOnly);
+        return builder.WithVolume(
+            name ?? VolumeNameGenerator.Generate(builder, "dial"),
+            "/app/data",
+            isReadOnly
+        );
     }
 
     /// <summary>
@@ -222,7 +183,15 @@ public static class DialBuilderExtensions
             .ApplicationBuilder.AddResource(chatThemes)
             .WithImage(DialContainerImageTags.ChatThemesImage, DialContainerImageTags.ChatThemesTag)
             .WithImageRegistry(DialContainerImageTags.ChatThemesRegistry)
-            .WithHttpEndpoint(targetPort: 8080, name: "http");
+            .WithHttpEndpoint(targetPort: 8080, name: "http")
+            .WithUrlForEndpoint(
+                "http",
+                r =>
+                {
+                    r.DisplayText = "Chat Themes Config";
+                    r.Url += "/config.json";
+                }
+            );
 
         var chat = new DialChatResource(name);
         var chatBuilder = builder
@@ -230,7 +199,10 @@ public static class DialBuilderExtensions
             .WithImage(DialContainerImageTags.ChatImage, DialContainerImageTags.ChatTag)
             .WithImageRegistry(DialContainerImageTags.ChatRegistry)
             .WithHttpEndpoint(port: port, targetPort: 3000, name: "http")
-            .WithEnvironment(context => ConfigureDialChat(context, builder.Resource, themesBuilder.Resource))
+            .WithUrlForEndpoint("http", r => r.DisplayText = "Chat")
+            .WithEnvironment(context =>
+                ConfigureDialChat(context, builder.Resource, themesBuilder.Resource)
+            )
             .WaitFor(themesBuilder)
             .WaitFor(builder);
 

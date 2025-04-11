@@ -1,14 +1,13 @@
 <Project Sdk="Microsoft.NET.Sdk">
-  <Sdk Name="Aspire.AppHost.Sdk" Version="9.2.0-preview.1.25172.1" />
+  <Sdk Name="Aspire.AppHost.Sdk" Version="9.2.0" />
 
   <PropertyGroup>
     <OutputType>Exe</OutputType>
-    <IsAspireHost>true</IsAspireHost>
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="Aspire.Hosting.AppHost" Version="9.2.0-preview.1.25172.1" />
-    <PackageReference Include="Aspire.Hosting.Azure.CognitiveServices" Version="9.1.0" />
+    <PackageReference Include="Aspire.Hosting.AppHost" Version="9.2.0" />
+    <PackageReference Include="Aspire.Hosting.Azure.CognitiveServices" Version="9.2.0" />
   </ItemGroup>
 
   <ItemGroup>
