@@ -1,48 +1,10 @@
 namespace EPAM.Dial.Aspire.Hosting.Models;
 
-using System.Text.Json;
 using System.Text.Json.Serialization;
 
-/// <summary>
-/// Represents a Dial model.
-/// </summary>
-/// <example>
-/// <code>
-/// "gpt-4": {
-///      "type": "chat",
-///      "displayName": "GPT-4",
-///      "endpoint": "http://adapter-openai:5000/openai/deployments/gpt-4/chat/completions",
-///      "iconUrl": "http://localhost:3001/gpt4.svg",
-///      "upstreams": [
-///        {
-///          "endpoint": "http://azure_deployment_host/openai/deployments/gpt-4/chat/completions",
-///          "key": "AZURE_MODEL_API_KEY"
-///        }
-///      ]
-///    }
-/// </code>
-/// </example>
+[Obsolete("Use DialModelResource instead.")]
 public class DialModel
 {
-    private static JsonSerializerOptions JsonSerializerOptions { get; } =
-        new()
-        {
-            PropertyNamingPolicy = JsonNamingPolicy.CamelCase,
-            WriteIndented = true,
-            DefaultIgnoreCondition = JsonIgnoreCondition.WhenWritingNull,
-        };
-    public string Type { get; set; } = "chat";
-
-    /// <summary>
-    /// The name of the model.
-    /// </summary>
-    public string DisplayName { get; init; } = default!;
-
-    [JsonIgnore]
-    public string DeploymentName { get; set; } = default!;
-
-    public string? Description { get; set; }
-
     /// <summary>
     /// The model endpoint.
     /// </summary>
@@ -50,7 +12,17 @@ public class DialModel
     public Func<string> EndpointExpression { get; set; } = default!;
 
     public string Endpoint =>
-        this.EndpointExpression?.Invoke() ?? throw new InvalidOperationException("EndpointExpression is not set.");
+        this.EndpointExpression?.Invoke()
+        ?? throw new InvalidOperationException("EndpointExpression is not set.");
+
+    /// <summary>
+    /// The name of the model.
+    /// </summary>
+    public string DisplayName { get; init; } = default!;
+
+    public string DeploymentName { get; set; } = default!;
+
+    public string? Description { get; set; }
 
     /// <summary>
     /// The Icon URL.
@@ -58,24 +30,20 @@ public class DialModel
     public Uri? IconUrl { get; set; }
 
     [JsonIgnore]
-    public ICollection<Func<ModelUpstream>> Upstreams { get; set; } = [];
+    public ICollection<Func<ModelUpstream>> Upstreams { get; init; } = [];
 
     [JsonPropertyName("upstreams")]
     public ICollection<ModelUpstream> UpstreamsValue { get; set; } = [];
 
-    internal static string ToJson(IReadOnlyDictionary<string, DialModel> models)
+    public DialModel WithUpstream(ModelUpstream upstream)
     {
-        foreach (var model in models.Values)
-        {
-            model.UpstreamsValue = [.. model.Upstreams.Select(upstream => upstream())];
-        }
-        return JsonSerializer.Serialize(models, JsonSerializerOptions);
+        this.Upstreams.Add(() => upstream);
+        return this;
     }
+}
 
-    internal static string ToLimitsJson(IReadOnlyDictionary<string, DialModel> models)
-    {
-        var limits = models.Keys.ToDictionary(model => model, _ => new { });
-
-        return JsonSerializer.Serialize(limits, JsonSerializerOptions);
-    }
+public class ModelUpstream
+{
+    public string Endpoint { get; init; } = default!;
+    public string Key { get; init; } = default!;
 }

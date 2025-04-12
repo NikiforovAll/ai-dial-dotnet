@@ -3,6 +3,8 @@ namespace Aspire.Hosting;
 using Aspire.Hosting.ApplicationModel;
 using EPAM.Dial.Aspire.Hosting;
 using EPAM.Dial.Aspire.Hosting.Models;
+using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Logging;
 
 /// <summary>
 /// Provides extension methods for adding Dial to the application model.
@@ -20,6 +22,7 @@ public static class DialBuilderExtensions
     {
         var dial = new DialResource(name);
 
+        // TODO: how to replace cache?
         var cache = builder
             .AddRedis($"{dial.Name}-cache")
             .WithImage("redis:7.2.4-alpine3.19")
@@ -27,8 +30,8 @@ public static class DialBuilderExtensions
 
         var resource = builder
             .AddResource(dial)
-            .WithImage(DialContainerImageTags.Image, DialContainerImageTags.Tag)
-            .WithImageRegistry(DialContainerImageTags.Registry)
+            .WithImage(DialCoreContainerImageTags.Image, DialCoreContainerImageTags.Tag)
+            .WithImageRegistry(DialCoreContainerImageTags.Registry)
             .WithHttpEndpoint(port: port, targetPort: 8080, DialResource.PrimaryEndpointName)
             .WithEnvironment(context =>
             {
@@ -56,15 +59,53 @@ public static class DialBuilderExtensions
                 );
             })
             .WithReference(cache)
-            .WithContainerFiles(destinationPath: "/opt", callback: (_, _) => DialConfigFiles(dial))
+            .WithContainerFiles(
+                destinationPath: "/opt",
+                callback: (ctx, _) => DialConfigFiles(ctx, dial)
+            )
             .WaitFor(cache)
             .PublishAsContainer();
 
         return resource;
     }
 
-    private static Task<IEnumerable<ContainerFileSystemItem>> DialConfigFiles(DialResource dial) =>
-        Task.FromResult<IEnumerable<ContainerFileSystemItem>>(
+    private static Task<IEnumerable<ContainerFileSystemItem>> DialConfigFiles(
+        ContainerFileSystemCallbackContext ctx,
+        DialResource dial
+    )
+    {
+        var logger = ctx
+            .ServiceProvider.GetRequiredService<ResourceLoggerService>()
+            .GetLogger(dial);
+
+        var limits = DialModelDescriptorExtensions.ToLimitsJson(dial.Models);
+        var configJson = new ContainerFile
+        {
+            Name = "config.json",
+            Contents = /*lang=json,strict*/
+                $$"""
+                {
+                    "routes": {},
+                    "applications": {},
+                    "models": {{dial.Models.Values.ToJson()}},
+                    "keys": {
+                        "dial_api_key": {
+                            "project": "TEST-PROJECT",
+                            "role": "default"
+                        }
+                    },
+                    "roles": {
+                        "default": {
+                            "limits": {{limits}}
+                        }
+                    }
+                }
+                """,
+        };
+        logger.LogInformation("Adding config.json:");
+        logger.LogInformation("{ConfigJson}", configJson.Contents);
+
+        return Task.FromResult<IEnumerable<ContainerFileSystemItem>>(
             [
                 new ContainerDirectory
                 {
@@ -115,33 +156,12 @@ public static class DialBuilderExtensions
                             </config>
                             """,
                         },
-                        new ContainerFile
-                        {
-                            Name = "config.json",
-                            Contents = /*lang=json,strict*/
-                            $$"""
-                            {
-                                "routes": {},
-                                "applications": {},
-                                "models": {{DialModel.ToJson(dial.Models)}},
-                                "keys": {
-                                    "dial_api_key": {
-                                        "project": "TEST-PROJECT",
-                                        "role": "default"
-                                    }
-                                },
-                                "roles": {
-                                    "default": {
-                                        "limits": {{DialModel.ToLimitsJson(dial.Models)}}
-                                    }
-                                }
-                            }
-                            """,
-                        },
+                        configJson,
                     ],
                 },
             ]
         );
+    }
 
     /// <summary>
     /// Adds a data volume to the DIAL container.
@@ -181,8 +201,11 @@ public static class DialBuilderExtensions
         var chatThemes = new DialChatThemesResource($"{name}-themes");
         var themesBuilder = builder
             .ApplicationBuilder.AddResource(chatThemes)
-            .WithImage(DialContainerImageTags.ChatThemesImage, DialContainerImageTags.ChatThemesTag)
-            .WithImageRegistry(DialContainerImageTags.ChatThemesRegistry)
+            .WithImage(
+                DialCoreContainerImageTags.ChatThemesImage,
+                DialCoreContainerImageTags.ChatThemesTag
+            )
+            .WithImageRegistry(DialCoreContainerImageTags.ChatThemesRegistry)
             .WithHttpEndpoint(targetPort: 8080, name: "http")
             .WithUrlForEndpoint(
                 "http",
@@ -196,8 +219,8 @@ public static class DialBuilderExtensions
         var chat = new DialChatResource(name);
         var chatBuilder = builder
             .ApplicationBuilder.AddResource(chat)
-            .WithImage(DialContainerImageTags.ChatImage, DialContainerImageTags.ChatTag)
-            .WithImageRegistry(DialContainerImageTags.ChatRegistry)
+            .WithImage(DialCoreContainerImageTags.ChatImage, DialCoreContainerImageTags.ChatTag)
+            .WithImageRegistry(DialCoreContainerImageTags.ChatRegistry)
             .WithHttpEndpoint(port: port, targetPort: 3000, name: "http")
             .WithUrlForEndpoint("http", r => r.DisplayText = "Chat")
             .WithEnvironment(context =>
@@ -210,6 +233,9 @@ public static class DialBuilderExtensions
 
         chatBuilder.WithParentRelationship(builder.Resource);
         themesBuilder.WithParentRelationship(builder.Resource);
+
+        builder.Resource.ChatThemes = chatThemes;
+        builder.Resource.Chat = chat;
 
         return builder;
     }

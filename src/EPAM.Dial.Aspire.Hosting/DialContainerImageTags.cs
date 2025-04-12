@@ -1,6 +1,6 @@
 namespace EPAM.Dial.Aspire.Hosting;
 
-internal static class DialContainerImageTags
+internal static class DialCoreContainerImageTags
 {
     public const string Registry = "docker.io";
     public const string Image = "epam/ai-dial-core";
@@ -13,4 +13,12 @@ internal static class DialContainerImageTags
     public const string ChatThemesRegistry = "docker.io";
     public const string ChatThemesImage = "epam/ai-dial-chat-themes";
     public const string ChatThemesTag = "0.9.1";
+}
+
+
+public static class DialImageTags
+{
+    public const string OpenAIAdapterRegistry = "docker.io";
+    public const string OpenAIAdapterImage = "epam/ai-dial-adapter-openai";
+    public const string OpenAIAdapterTag = "0.22.0";
 }

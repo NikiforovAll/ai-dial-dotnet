@@ -1,7 +1,7 @@
 namespace Aspire.Hosting;
 
 using Aspire.Hosting.ApplicationModel;
-using EPAM.Dial.Aspire.Hosting.Models;
+using EPAM.Dial.Aspire.Hosting;
 
 /// <summary>
 /// Provides extension methods for adding Dial to the application model.
@@ -14,25 +14,24 @@ public static class DialBuilderModelExtensions
     public static IResourceBuilder<DialModelAdapterResource> AddOpenAIModelAdapter(
         this IResourceBuilder<DialResource> builder,
         string name,
-        DialModel model
+        string deploymentName
     )
     {
-        return builder.AddModelAdapter(name, "epam/ai-dial-adapter-openai:0.22.0", model);
+        return builder.AddModelAdapter(
+            name,
+            deploymentName,
+            $"{DialImageTags.OpenAIAdapterImage}:{DialImageTags.OpenAIAdapterTag}"
+        );
     }
 
     public static IResourceBuilder<DialModelAdapterResource> AddModelAdapter(
         this IResourceBuilder<DialResource> builder,
         string name,
-        string adapter,
-        DialModel model
+        string deploymentName,
+        string adapter
     )
     {
-        model.DeploymentName ??= name;
-        var modelResource = new DialModelAdapterResource(
-            name,
-            model.DeploymentName,
-            builder.Resource
-        );
+        var modelResource = new DialModelAdapterResource(name, deploymentName, builder.Resource);
 
         var modelBuilder = builder
             .ApplicationBuilder.AddResource(modelResource)
@@ -40,30 +39,79 @@ public static class DialBuilderModelExtensions
             .WithHttpEndpoint(port: null, targetPort: 5000, DialResource.PrimaryEndpointName)
             .WithEnvironment("WEB_CONCURRENCY", "3");
 
-        var adapterResource = modelBuilder.Resource;
-        model.EndpointExpression = () =>
-            $"{adapterResource.PrimaryEndpoint.Scheme}://{adapterResource.Name}:{adapterResource.PrimaryEndpoint.TargetPort}/openai/deployments/{model.DeploymentName}/chat/completions";
-        builder.Resource.AddModel(model);
+        modelResource.Endpoint = modelBuilder.Resource.PrimaryEndpoint;
+        builder.Resource.AddModel(modelResource);
 
         return modelBuilder;
     }
 
-    /// <summary>
-    /// Adds a Dial model to the application model. The model is expected to be a OpenAI- compatible local model. E.g.: model deployed via ollama.
-    /// </summary>
+    public static IResourceBuilder<DialModelAdapterResource> WithUpstream(
+        this IResourceBuilder<DialModelAdapterResource> builder,
+        IResourceBuilder<IResourceWithConnectionString> resourceBuilder,
+        IResourceBuilder<ParameterResource>? key = null
+    )
+    {
+        builder.Resource.Upstreams.Add((resourceBuilder.Resource, key?.Resource?.Value));
+        return builder;
+    }
+
     public static IResourceBuilder<DialModelResource> AddModel(
         this IResourceBuilder<DialResource> builder,
         string name,
-        DialModel model
+        string deploymentName
     )
     {
-        model.DeploymentName ??= name;
-        var modelResource = new DialModelResource(name, model.DeploymentName, builder.Resource);
+        var modelResource = new DialModelResource(name, deploymentName, builder.Resource);
 
         var modelBuilder = builder.ApplicationBuilder.AddResource(modelResource);
 
-        builder.Resource.AddModel(model);
+        builder.Resource.AddModel(modelResource);
 
         return modelBuilder;
+    }
+
+    public static IResourceBuilder<DialModelResource> WithEndpoint(
+        this IResourceBuilder<DialModelResource> builder,
+        EndpointReference endpoint
+    )
+    {
+        builder.Resource.Endpoint = endpoint;
+        return builder;
+    }
+
+    public static IResourceBuilder<IDialModelResource> WithDisplayName(
+        this IResourceBuilder<IDialModelResource> builder,
+        string displayName
+    )
+    {
+        builder.Resource.DisplayName = displayName;
+        return builder;
+    }
+
+    public static IResourceBuilder<IDialModelResource> WithDescription(
+        this IResourceBuilder<IDialModelResource> builder,
+        string description
+    )
+    {
+        builder.Resource.Description = description;
+        return builder;
+    }
+
+    public static IResourceBuilder<IDialModelResource> WithIconUrl(
+        this IResourceBuilder<IDialModelResource> builder,
+        string iconUrl
+    )
+    {
+        builder.Resource.IconUrl = iconUrl;
+        return builder;
+    }
+
+    public static IResourceBuilder<IDialModelResource> WithWellKnownIcon(
+        this IResourceBuilder<IDialModelResource> builder,
+        WellKnownIcon icon
+    )
+    {
+        builder.Resource.WellKnownIcon = icon;
+        return builder;
     }
 }

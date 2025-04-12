@@ -4,6 +4,7 @@
     <Product>Nall.Epam.Dial.Aspire.Hosting</Product>
     <Description>Aspire support for EPAM Dial</Description>
     <PackageTags>$(PackageTags);aspire;cloud-native</PackageTags>
+    <RootNamespace>EPAM.Dial.Aspire.Hosting</RootNamespace>
   </PropertyGroup>
 
   <ItemGroup>

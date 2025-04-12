@@ -1,7 +1,6 @@
 namespace Aspire.Hosting;
 
 using Aspire.Hosting.ApplicationModel;
-using EPAM.Dial.Aspire.Hosting.Models;
 
 /// <summary>
 /// A resource that represents an Dial server
@@ -16,7 +15,8 @@ public class DialResource(string name) : ContainerResource(name), IResourceWithC
 
     private EndpointReference? primaryEndpoint;
 
-    public EndpointReference PrimaryEndpoint => this.primaryEndpoint ??= new(this, PrimaryEndpointName);
+    public EndpointReference PrimaryEndpoint =>
+        this.primaryEndpoint ??= new(this, PrimaryEndpointName);
 
     /// <summary>
     /// Gets the connection string expression for the Dial http endpoint.
@@ -26,15 +26,23 @@ public class DialResource(string name) : ContainerResource(name), IResourceWithC
             $"Endpoint={this.PrimaryEndpoint.Property(EndpointProperty.Scheme)}://{this.PrimaryEndpoint.Property(EndpointProperty.Host)}:{this.PrimaryEndpoint.Property(EndpointProperty.Port)};Key=dial_api_key"
         );
 
-    private readonly Dictionary<string, DialModel> models = new(StringComparer.OrdinalIgnoreCase);
+    private readonly Dictionary<string, IDialModelResource> models = new(
+        StringComparer.OrdinalIgnoreCase
+    );
 
     /// <summary>
     /// A dictionary where the key is the resource name and the value is the database name.
     /// </summary>
-    public IReadOnlyDictionary<string, DialModel> Models => this.models;
+    public IReadOnlyDictionary<string, IDialModelResource> Models => this.models;
 
-    internal void AddModel(DialModel model)
+    internal void AddModel(IDialModelResource model)
     {
         this.models.TryAdd(model.DeploymentName, model);
     }
+
+    internal RedisResource? Cache { get; set; }
+
+    internal DialChatThemesResource? ChatThemes { get; set; }
+
+    internal DialChatResource? Chat { get; set; }
 }

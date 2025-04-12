@@ -26,7 +26,6 @@
         "reveal": "always",
         "revealProblems": "onProblem"
       },
-      // "problemMatcher": "$msCompile",
       "detail": "Builds the solution ⚙️",
       "icon": {
         "color": "terminal.ansiGreen"
@@ -116,7 +115,8 @@
       },
       "presentation": {
         "reveal": "always"
-      }
+      },
+      "problemMatcher": []
     },
     {
       "label": "aspire:run:GettingStarted_OpenAI",
@@ -133,7 +133,8 @@
       },
       "presentation": {
         "reveal": "always"
-      }
+      },
+      "problemMatcher": []
     }
   ]
 }

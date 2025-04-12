@@ -47,23 +47,20 @@ var ollama = builder
     .WithOpenWebUI()
     .WithDataVolume()
     .WithLifetime(ContainerLifetime.Persistent);
-
 ollama.AddModel("ollama-deepseek-r1", "deepseek-r1:1.5b");
 ollama.AddModel("ollama-phi3", "phi3.5");
 
-var dial = builder
-    .AddDial("dial", port: 8080)
-    .WaitFor(ollama)
-    .WithChatUI(port: 3000)
-    .WithLifetime(ContainerLifetime.Persistent);
+var dial = builder.AddDial("dial", port: 8080).WaitFor(ollama).WithChatUI(port: 3000);
 
-var deepseek = dial.AddModel("deepseek", DeepSeekR1(ollama.Resource.PrimaryEndpoint));
-var phi3 = dial.AddModel("phi3", Phi3(ollama.Resource.PrimaryEndpoint));
+var deepseek = dial.AddModel("deepseek", deploymentName: "deepseek-r1:1.5b")
+    .WithEndpoint(ollama.Resource.PrimaryEndpoint)
+    .WithDisplayName("DeepSeek-R1");
 
-builder.AddProject<Projects.Api>("api")
-    .WithReference(deepseek)
-    .WithReference(phi3)
-    .WaitFor(dial);
+var phi3 = dial.AddModel("phi3", deploymentName: "phi3.5")
+    .WithEndpoint(ollama.Resource.PrimaryEndpoint)
+    .WithDisplayName("Phi-3.5"); 
+
+builder.AddProject<Projects.Api>("api").WithReference(deepseek).WithReference(phi3).WaitFor(dial);
 
 builder.Build().Run();
 ```
@@ -74,6 +71,37 @@ Here is the output from Aspire Dashboard. It shows *Aspire Resources Component G
 
 💡 You are not limited to only self-hosted models. AI DIAL allows you to access models from all major LLM providers, language models from the open-source community, alternative vendors, and fine-tuned micro models, as well as self-hosted or models listed on HuggingFace or DeepSeek.
 See [Supported Models](https://docs.dialx.ai/platform/supported-models) for more information.
+
+For example, you can use `OpenAI` models:
+
+```csharp
+var builder = DistributedApplication.CreateBuilder(args);
+
+var openAIApiKey = builder.AddParameter("azure-openai-api-key", secret: true);
+var openai = builder
+    .AddAzureOpenAI("openai")
+    .ConfigureInfrastructure(infra =>
+    {
+        var resources = infra.GetProvisionableResources();
+        var account = resources.OfType<CognitiveServicesAccount>().Single();
+        account.Properties.DisableLocalAuth = false; // so we can use api key
+    });
+var gpt4 = openai.AddDeployment("az-gpt-4o-mini", "gpt-4o-mini", "2024-07-18");
+
+var dial = builder.AddDial("dial", port: 8080).WithChatUI(port: 3000).WaitFor(gpt4);
+
+var dialOpenAI = dial.AddOpenAIModelAdapter("gpt-4o-mini", deploymentName: "gpt-4o-mini")
+    .WithUpstream(gpt4, openAIApiKey)
+    .WithDisplayName("gpt-4o-mini")
+    .WithDescription("Azure OpenAI")
+    .WithWellKnownIcon(WellKnownIcon.GPT4);
+
+builder.AddProject<Projects.Api>("api").WithReference(dialOpenAI).WithReference(gpt4).WaitFor(dial);
+
+builder.Build().Run();
+```
+
+The code above shows how to create a simple DIAL installation configured to work with `Azure OpenAI` models.
 
 ### DIAL Chat
 

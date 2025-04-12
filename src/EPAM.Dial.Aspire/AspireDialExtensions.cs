@@ -75,11 +75,18 @@ public static class AspireDialExtensions
 
         if (builder.Configuration.GetConnectionString(connectionName) is string connectionString)
         {
-            var connectionBuilder = new DbConnectionStringBuilder { ConnectionString = connectionString };
+            var connectionBuilder = new DbConnectionStringBuilder
+            {
+                ConnectionString = connectionString,
+            };
 
             if (
                 connectionBuilder.ContainsKey("Endpoint")
-                && Uri.TryCreate(connectionBuilder["Endpoint"].ToString(), UriKind.Absolute, out var endpoint)
+                && Uri.TryCreate(
+                    connectionBuilder["Endpoint"].ToString(),
+                    UriKind.Absolute,
+                    out var endpoint
+                )
             )
             {
                 settings.Endpoint = endpoint;
@@ -135,7 +142,9 @@ public static class AspireDialExtensions
 
         OpenAIClient ConfigureDialClient(IServiceProvider serviceProvider)
         {
-            var httpClient = serviceProvider.GetRequiredService<IHttpClientFactory>().CreateClient(httpClientKey);
+            var httpClient = serviceProvider
+                .GetRequiredService<IHttpClientFactory>()
+                .CreateClient(httpClientKey);
 
             if (!string.IsNullOrWhiteSpace(settings.Key))
             {
@@ -153,7 +162,10 @@ public static class AspireDialExtensions
 
             var options = new OpenAIClientOptions()
             {
-                Endpoint = new Uri(settings.Endpoint, $"/openai/deployments/{settings.SelectedModel}"),
+                Endpoint = new Uri(
+                    settings.Endpoint,
+                    $"/openai/deployments/{settings.SelectedModel}?api-version=2023-05-15"
+                ),
                 Transport = new HttpClientPipelineTransport(httpClient),
             };
 
