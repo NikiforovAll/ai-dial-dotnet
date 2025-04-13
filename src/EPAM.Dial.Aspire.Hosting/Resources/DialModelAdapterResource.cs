@@ -16,7 +16,7 @@ public class DialModelAdapterResource(string name, string deploymentName, DialRe
         this.primaryEndpoint ??= new(this, PrimaryEndpointName);
 
     public ReferenceExpression ConnectionStringExpression =>
-        ReferenceExpression.Create($"{this.Parent};Model={this.DeploymentName}");
+        ReferenceExpression.Create($"{this.Parent};Deployment={this.DeploymentName}");
 
     public string DeploymentName { get; } = deploymentName;
 

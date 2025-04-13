@@ -78,30 +78,7 @@ public static class DialBuilderExtensions
             .ServiceProvider.GetRequiredService<ResourceLoggerService>()
             .GetLogger(dial);
 
-        var limits = DialModelDescriptorExtensions.ToLimitsJson(dial.Models);
-        var configJson = new ContainerFile
-        {
-            Name = "config.json",
-            Contents = /*lang=json,strict*/
-                $$"""
-                {
-                    "routes": {},
-                    "applications": {},
-                    "models": {{dial.Models.Values.ToJson()}},
-                    "keys": {
-                        "dial_api_key": {
-                            "project": "TEST-PROJECT",
-                            "role": "default"
-                        }
-                    },
-                    "roles": {
-                        "default": {
-                            "limits": {{limits}}
-                        }
-                    }
-                }
-                """,
-        };
+        var configJson = new ContainerFile { Name = "config.json", Contents = dial.ToJson() };
         logger.LogInformation("Adding config.json:");
         logger.LogInformation("{ConfigJson}", configJson.Contents);
 

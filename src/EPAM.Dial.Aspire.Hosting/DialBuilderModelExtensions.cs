@@ -2,6 +2,9 @@ namespace Aspire.Hosting;
 
 using Aspire.Hosting.ApplicationModel;
 using EPAM.Dial.Aspire.Hosting;
+using EPAM.Dial.Aspire.Hosting.Models;
+using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Logging;
 
 /// <summary>
 /// Provides extension methods for adding Dial to the application model.
@@ -39,6 +42,24 @@ public static class DialBuilderModelExtensions
             .WithHttpEndpoint(port: null, targetPort: 5000, DialResource.PrimaryEndpointName)
             .WithEnvironment("WEB_CONCURRENCY", "3");
 
+        modelBuilder.ApplicationBuilder.Eventing.Subscribe<ResourceReadyEvent>(
+            modelBuilder.Resource,
+            (@event, cancellationToken) =>
+            {
+                var logger = @event
+                    .Services.GetRequiredService<ResourceLoggerService>()
+                    .GetLogger(modelBuilder.Resource);
+
+                logger.LogInformation("Starting model - '{ModelName}'", modelBuilder.Resource.Name);
+                logger.LogInformation(
+                    "{Config}",
+                    DescriptorExtensions.ToJson(modelBuilder.Resource.ToDescriptor())
+                );
+
+                return Task.CompletedTask;
+            }
+        );
+
         modelResource.Endpoint = modelBuilder.Resource.PrimaryEndpoint;
         builder.Resource.AddModel(modelResource);
 
@@ -64,6 +85,24 @@ public static class DialBuilderModelExtensions
         var modelResource = new DialModelResource(name, deploymentName, builder.Resource);
 
         var modelBuilder = builder.ApplicationBuilder.AddResource(modelResource);
+
+        modelBuilder.ApplicationBuilder.Eventing.Subscribe<ResourceReadyEvent>(
+            modelBuilder.Resource,
+            (@event, cancellationToken) =>
+            {
+                var logger = @event
+                    .Services.GetRequiredService<ResourceLoggerService>()
+                    .GetLogger(modelBuilder.Resource);
+
+                logger.LogInformation("Starting model - '{ModelName}'", modelBuilder.Resource.Name);
+                logger.LogInformation(
+                    "{Config}",
+                    DescriptorExtensions.ToJson(modelBuilder.Resource.ToDescriptor())
+                );
+
+                return Task.CompletedTask;
+            }
+        );
 
         builder.Resource.AddModel(modelResource);
 

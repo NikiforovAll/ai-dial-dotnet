@@ -1,9 +1,19 @@
 namespace EPAM.Dial.Aspire.Hosting.Models;
 
-using System.Text.Json;
-using System.Text.Json.Serialization;
-using global::Aspire.Hosting;
-using global::Aspire.Hosting.ApplicationModel;
+internal class DialDeploymentDescriptor
+{
+    public object? Routes { get; set; } = new { };
+
+    public AssistantBuilderDescriptor? Assistant { get; set; }
+
+    public Dictionary<string, ModelDescriptor>? Models { get; set; }
+
+    public Dictionary<string, AddonDescriptor>? Addons { get; set; }
+
+    public Dictionary<string, object>? Keys { get; set; }
+
+    public Dictionary<string, object>? Roles { get; set; }
+}
 
 /// <summary>
 /// Represents a Dial model.
@@ -24,7 +34,7 @@ using global::Aspire.Hosting.ApplicationModel;
 ///    }
 /// </code>
 /// </example>
-internal class DialModelDescriptor
+internal class ModelDescriptor
 {
     public string Type { get; init; } = "chat";
 
@@ -54,123 +64,29 @@ internal class ModelUpstreamDescriptor
     public string? Key { get; init; }
 }
 
-internal static class DialModelDescriptorExtensions
+internal class AssistantBuilderDescriptor
 {
-    private static JsonSerializerOptions JsonSerializerOptions { get; } =
-        new()
-        {
-            PropertyNamingPolicy = JsonNamingPolicy.CamelCase,
-            WriteIndented = true,
-            DefaultIgnoreCondition = JsonIgnoreCondition.WhenWritingNull,
-        };
+    public string? Endpoint { get; init; }
 
-    public static string ToJson(this IEnumerable<IDialModelResource> models)
-    {
-        var modelDict = models.ToDictionary(model => model.DeploymentName, MapFrom);
-        return JsonSerializer.Serialize(modelDict, JsonSerializerOptions);
-    }
+    public Dictionary<string, AssistantDescriptor> Assistants { get; set; } = [];
+}
 
-    public static string ToLimitsJson(IReadOnlyDictionary<string, IDialModelResource> models)
-    {
-        var limits = models.Keys.ToDictionary(model => model, _ => new { });
+internal class AssistantDescriptor
+{
+    public string Prompt { get; set; } = string.Empty;
 
-        return JsonSerializer.Serialize(limits, JsonSerializerOptions);
-    }
+    public string? DisplayName { get; set; }
 
-    private static DialModelDescriptor MapFrom(IDialModelResource model)
-    {
-        var descriptor = new DialModelDescriptor
-        {
-            DisplayName = model.DisplayName,
-            IconUrl = model.IconUrl ?? MapIcon(model),
-            Description = model.Description,
-            Endpoint = model switch
-            {
-                DialModelResource modelResource =>
-                    $"{modelResource.Endpoint!.Scheme}://{modelResource.Endpoint.Resource.Name}:{modelResource.Endpoint.TargetPort}/v1/chat/completions",
+    public string? Description { get; set; }
 
-                DialModelAdapterResource adapterResource =>
-                    $"{adapterResource.PrimaryEndpoint.Scheme}://{adapterResource.Name}:{adapterResource.PrimaryEndpoint.TargetPort}/openai/deployments/{model.DeploymentName}/chat/completions",
-                _ => throw new NotSupportedException($"Unsupported model type: {model.GetType()}"),
-            },
-            Upstreams = model switch
-            {
-                DialModelResource => [],
+    public List<string>? Addons { get; set; } = [];
+}
 
-                DialModelAdapterResource modelAdapterResource =>
-                    modelAdapterResource.Upstreams.Select(u => MapUpstreamFrom(model, u)),
-                _ => throw new NotSupportedException($"Unsupported model type: {model.GetType()}"),
-            },
-        };
+internal class AddonDescriptor
+{
+    public string? Endpoint { get; init; }
 
-        return descriptor;
-    }
+    public string? DisplayName { get; set; }
 
-    private static string? MapIcon(IDialModelResource model)
-    {
-        var themesEndpoint = model.Parent.ChatThemes?.PrimaryEndpoint;
-
-        if (themesEndpoint is null)
-        {
-            return null;
-        }
-
-        var iconName = model.WellKnownIcon switch
-        {
-            WellKnownIcon.GPT4 => "gpt4.svg",
-            WellKnownIcon.GPT3 => "gpt3.svg",
-            WellKnownIcon.GPT4Vision => "GPT-4-V.svg",
-            WellKnownIcon.GeminiProVision => "Gemini-Pro-Vision.svg",
-            WellKnownIcon.Gemini => "Gemini.svg",
-            WellKnownIcon.Llama2 => "Llama2.svg",
-            WellKnownIcon.Llama3 => "Llama3.svg",
-            WellKnownIcon.Anthropic => "anthropic.svg",
-            _ => null,
-        };
-
-        return $"{themesEndpoint!.Scheme}://{themesEndpoint.Host}:{themesEndpoint.Port}/{iconName}";
-    }
-
-    private static ModelUpstreamDescriptor MapUpstreamFrom(
-        IDialModelResource model,
-        (IResourceWithConnectionString resource, string? key) upstream
-    )
-    {
-        var resource = upstream.resource;
-
-        if (resource.ConnectionStringExpression is null)
-        {
-            throw new InvalidOperationException(
-                $"Resource {resource.Name} does not have a connection string expression."
-            );
-        }
-
-        var tokens = resource
-            .ConnectionStringExpression.GetValueAsync(default)
-            .GetAwaiter()
-            .GetResult()
-            .Split(';');
-
-        var endpoint =
-            tokens
-                .FirstOrDefault(x => x.StartsWith("Endpoint=", StringComparison.OrdinalIgnoreCase))
-                ?.Split('=')[1] ?? string.Empty;
-        var key =
-            upstream.key
-            ?? tokens
-                .FirstOrDefault(x => x.StartsWith("Key=", StringComparison.OrdinalIgnoreCase))
-                ?.Split('=')[1]
-            ?? string.Empty;
-
-        var deploymentName = tokens
-            .FirstOrDefault(x => x.StartsWith("Deployment=", StringComparison.OrdinalIgnoreCase))
-            ?.Split('=')[1];
-
-        return new ModelUpstreamDescriptor
-        {
-            Endpoint =
-                $"{endpoint.TrimEnd('/')}/openai/deployments/{deploymentName ?? model.DeploymentName}/chat/completions",
-            Key = key,
-        };
-    }
+    public string? Description { get; set; }
 }

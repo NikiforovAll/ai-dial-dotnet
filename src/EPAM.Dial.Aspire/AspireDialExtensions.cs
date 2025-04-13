@@ -92,9 +92,9 @@ public static class AspireDialExtensions
                 settings.Endpoint = endpoint;
             }
 
-            if (connectionBuilder.ContainsKey("Model"))
+            if (connectionBuilder.ContainsKey("Deployment"))
             {
-                settings.SelectedModel = (string)connectionBuilder["Model"];
+                settings.SelectedModel = (string)connectionBuilder["Deployment"];
             }
 
             if (connectionBuilder.ContainsKey("Key"))

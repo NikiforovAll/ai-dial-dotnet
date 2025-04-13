@@ -10,7 +10,7 @@ public class DialModelResource(string name, string deploymentName, DialResource 
     /// Gets the connection string expression for the Ollama model.
     /// </summary>
     public ReferenceExpression ConnectionStringExpression =>
-        ReferenceExpression.Create($"{this.Parent};Model={this.DeploymentName}");
+        ReferenceExpression.Create($"{this.Parent};Deployment={this.DeploymentName}");
 
     public DialResource Parent { get; } = dial;
 

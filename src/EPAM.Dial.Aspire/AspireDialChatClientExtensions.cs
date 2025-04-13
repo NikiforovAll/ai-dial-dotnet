@@ -18,7 +18,9 @@ public static class AspireDialChatClientExtensions
     {
         ArgumentNullException.ThrowIfNull(builder);
 
-        return builder.HostBuilder.Services.AddChatClient(services => CreateInnerChatClient(services, builder));
+        return builder.HostBuilder.Services.AddChatClient(services =>
+            CreateInnerChatClient(services, builder)
+        );
     }
 
     /// <summary>
@@ -42,10 +44,20 @@ public static class AspireDialChatClientExtensions
     /// Note that this doesn't use ".UseOpenTelemetry()" because the order of the clients would be incorrect.
     /// We want the telemetry client to be the innermost client, right next to the inner <see cref="OpenAIClient"/>.
     /// </summary>
-    private static IChatClient CreateInnerChatClient(IServiceProvider services, AspireDialApiClientBuilder builder)
+    private static OpenAIChatClient CreateInnerChatClient(
+        IServiceProvider services,
+        AspireDialApiClientBuilder builder
+    )
     {
-        var result = new OpenAIChatClient(services.GetRequiredService<OpenAIClient>(), builder.SelectedModel);
+        if (!string.IsNullOrWhiteSpace(builder.ServiceKey))
+        {
+            var client = services.GetRequiredKeyedService<OpenAIClient>(builder.ServiceKey);
+            return new OpenAIChatClient(client, builder.SelectedModel);
+        }
 
-        return result;
+        return new OpenAIChatClient(
+            services.GetRequiredService<OpenAIClient>(),
+            builder.SelectedModel
+        );
     }
 }

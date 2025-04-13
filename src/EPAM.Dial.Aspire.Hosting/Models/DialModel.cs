@@ -41,7 +41,7 @@ public class DialModel
         return this;
     }
 }
-
+[Obsolete("Use DialModelResource instead.")]
 public class ModelUpstream
 {
     public string Endpoint { get; init; } = default!;

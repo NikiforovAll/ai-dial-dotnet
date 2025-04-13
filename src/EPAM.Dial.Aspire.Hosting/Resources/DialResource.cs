@@ -45,4 +45,20 @@ public class DialResource(string name) : ContainerResource(name), IResourceWithC
     internal DialChatThemesResource? ChatThemes { get; set; }
 
     internal DialChatResource? Chat { get; set; }
+
+    internal DialAssistantBuilderResource? Assistant { get; set; }
+
+    private readonly Dictionary<string, DialAddonResource> addons = new(
+        StringComparer.OrdinalIgnoreCase
+    );
+
+    /// <summary>
+    /// A dictionary where the key is the resource name and the value is the addon resource.
+    /// </summary>
+    public IReadOnlyDictionary<string, DialAddonResource> Addons => this.addons;
+
+    internal void AddAddon(DialAddonResource addon)
+    {
+        this.addons.TryAdd(addon.Name, addon);
+    }
 }
