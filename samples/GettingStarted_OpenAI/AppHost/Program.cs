@@ -3,6 +3,13 @@ using Azure.Provisioning.CognitiveServices;
 var builder = DistributedApplication.CreateBuilder(args);
 
 var openAIApiKey = builder.AddParameter("azure-openai-api-key", secret: true);
+
+// alternatively, you can use a connection string to connect to specify the upstream
+// var cs = builder.AddConnectionString(
+//     "openai-as-connection-string",
+//     ReferenceExpression.Create($"Endpoint=https://api.openai.com/v1;Key={openAIApiKey};")
+// );
+
 var openai = builder
     .AddAzureOpenAI("openai")
     .ConfigureInfrastructure(infra =>

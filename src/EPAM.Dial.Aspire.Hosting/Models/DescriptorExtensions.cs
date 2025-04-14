@@ -15,13 +15,6 @@ internal static class DescriptorExtensions
             DefaultIgnoreCondition = JsonIgnoreCondition.WhenWritingNull,
         };
 
-    public static string ToJson(this DialResource dial)
-    {
-        var descriptor = dial.ToDescriptor();
-
-        return JsonSerializer.Serialize(descriptor, JsonSerializerOptions);
-    }
-
     public static string ToJson<T>(T source)
     {
         return JsonSerializer.Serialize(source, JsonSerializerOptions);
@@ -30,16 +23,19 @@ internal static class DescriptorExtensions
     public static DialDeploymentDescriptor ToDescriptor(this DialResource dial)
     {
         var models = MapModels(dial);
+        var applications = MapApplications(dial);
         var assistantDescriptor = MapAssistant(dial.Assistant);
         var addons = MapAddons(dial);
         var limits = models
             .Keys.Concat(assistantDescriptor?.Assistants.Keys.Select(x => x) ?? [])
             .Concat(addons.Keys)
+            .Concat(applications.Keys)
             .ToDictionary(model => model, _ => new { });
 
         var descriptor = new DialDeploymentDescriptor
         {
             Models = models,
+            Applications = applications,
             Assistant = assistantDescriptor,
             Addons = addons,
             Roles = new() { ["default"] = new Dictionary<string, object?> { ["limits"] = limits } },
@@ -54,6 +50,12 @@ internal static class DescriptorExtensions
         };
 
         return descriptor;
+    }
+
+    private static Dictionary<string, ApplicationDescriptor> MapApplications(DialResource dial)
+    {
+        var applications = dial.Applications.Values.ToDictionary(x => x.Name, ToDescriptor);
+        return applications;
     }
 
     public static AssistantDescriptor ToDescriptor(this DialAssistantResource assistant)
@@ -98,14 +100,47 @@ internal static class DescriptorExtensions
         return descriptor;
     }
 
-    public static AddonDescriptor ToDescriptor(this DialAddonResource addon) =>
-        new()
+    public static AddonDescriptor ToDescriptor(this DialAddonResource addon)
+    {
+        var endpointReference =
+            addon.PrimaryEndpoint
+            ?? throw new ArgumentException($"Addon {addon.Name} does not have a primary endpoint.");
+
+        var endpoint = GetEndpoint(endpointReference, addon.Parent.PrimaryEndpoint.ContainerHost);
+        return new()
         {
-            Endpoint =
-                $"{addon.PrimaryEndpoint!.Scheme}://{addon.PrimaryEndpoint.Resource.Name}:{addon.PrimaryEndpoint.TargetPort}/{addon.Path?.TrimStart('/')}",
+            Endpoint = $"{endpoint}/{addon.Path?.TrimStart('/')}",
             DisplayName = addon.DisplayName,
             Description = addon.Description,
         };
+    }
+
+    public static ApplicationDescriptor ToDescriptor(this DialApplicationResource application)
+    {
+        var endpointReference =
+            application.PrimaryEndpoint
+            ?? throw new ArgumentException(
+                $"Addon {application.Name} does not have a primary endpoint."
+            );
+
+        var endpoint = GetEndpoint(endpointReference, application.Parent.PrimaryEndpoint.ContainerHost);
+        return new()
+        {
+            Endpoint = $"{endpoint}/chat/completions",
+            DisplayName = application.DisplayName,
+            Description = application.Description,
+        };
+    }
+
+    private static string GetEndpoint(EndpointReference endpoint, string containerHostName)
+    {
+        var isContainer = endpoint.Resource.IsContainer();
+
+        var hostname = isContainer ? endpoint.Resource.Name : containerHostName;
+        var port = isContainer ? endpoint.TargetPort : endpoint.Port;
+
+        return $"{endpoint.Scheme}://{hostname}:{port}";
+    }
 
     private static Dictionary<string, AddonDescriptor> MapAddons(DialResource dial)
     {

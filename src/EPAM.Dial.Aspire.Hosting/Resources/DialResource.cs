@@ -1,6 +1,7 @@
 namespace Aspire.Hosting;
 
 using Aspire.Hosting.ApplicationModel;
+using EPAM.Dial.Aspire.Hosting.Models;
 
 /// <summary>
 /// A resource that represents an Dial server
@@ -52,6 +53,8 @@ public class DialResource(string name) : ContainerResource(name), IResourceWithC
         StringComparer.OrdinalIgnoreCase
     );
 
+    public Action<DialDeploymentDescriptor>? Overrides { get; internal set; } = _ => { };
+
     /// <summary>
     /// A dictionary where the key is the resource name and the value is the addon resource.
     /// </summary>
@@ -60,5 +63,19 @@ public class DialResource(string name) : ContainerResource(name), IResourceWithC
     internal void AddAddon(DialAddonResource addon)
     {
         this.addons.TryAdd(addon.Name, addon);
+    }
+
+    private readonly Dictionary<string, DialApplicationResource> applications = new(
+        StringComparer.OrdinalIgnoreCase
+    );
+
+    /// <summary>
+    /// A dictionary where the key is the resource name and the value is the application resource.
+    /// </summary>
+    public IReadOnlyDictionary<string, DialApplicationResource> Applications => this.applications;
+
+    internal void AddApplication(DialApplicationResource application)
+    {
+        this.applications.TryAdd(application.Name, application);
     }
 }

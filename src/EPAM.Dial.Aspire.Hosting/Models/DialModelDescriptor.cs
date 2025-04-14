@@ -1,12 +1,14 @@
 namespace EPAM.Dial.Aspire.Hosting.Models;
 
-internal class DialDeploymentDescriptor
+public class DialDeploymentDescriptor
 {
     public object? Routes { get; set; } = new { };
 
     public AssistantBuilderDescriptor? Assistant { get; set; }
 
     public Dictionary<string, ModelDescriptor>? Models { get; set; }
+
+    public Dictionary<string, ApplicationDescriptor>? Applications { get; set; }
 
     public Dictionary<string, AddonDescriptor>? Addons { get; set; }
 
@@ -34,7 +36,7 @@ internal class DialDeploymentDescriptor
 ///    }
 /// </code>
 /// </example>
-internal class ModelDescriptor
+public class ModelDescriptor
 {
     public string Type { get; init; } = "chat";
 
@@ -58,20 +60,20 @@ internal class ModelDescriptor
     public IEnumerable<ModelUpstreamDescriptor> Upstreams { get; set; } = [];
 }
 
-internal class ModelUpstreamDescriptor
+public class ModelUpstreamDescriptor
 {
     public string Endpoint { get; init; } = default!;
     public string? Key { get; init; }
 }
 
-internal class AssistantBuilderDescriptor
+public class AssistantBuilderDescriptor
 {
     public string? Endpoint { get; init; }
 
     public Dictionary<string, AssistantDescriptor> Assistants { get; set; } = [];
 }
 
-internal class AssistantDescriptor
+public class AssistantDescriptor
 {
     public string Prompt { get; set; } = string.Empty;
 
@@ -82,7 +84,16 @@ internal class AssistantDescriptor
     public List<string>? Addons { get; set; } = [];
 }
 
-internal class AddonDescriptor
+public class AddonDescriptor
+{
+    public string? Endpoint { get; init; }
+
+    public string? DisplayName { get; set; }
+
+    public string? Description { get; set; }
+}
+
+public class ApplicationDescriptor
 {
     public string? Endpoint { get; init; }
 

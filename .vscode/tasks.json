@@ -135,6 +135,24 @@
         "reveal": "always"
       },
       "problemMatcher": []
+    },
+    {
+      "label": "aspire:run:GettingStarted_Application",
+      "command": "aspire",
+      "type": "shell",
+      "args": [
+        "run",
+        "--project",
+        "samples/GettingStarted_Application/AppHost/AppHost.csproj"
+      ],
+      "icon": {
+        "id": "rocket",
+        "color": "terminal.ansiMagenta"
+      },
+      "presentation": {
+        "reveal": "always"
+      },
+      "problemMatcher": []
     }
   ]
 }

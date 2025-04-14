@@ -78,7 +78,12 @@ public static class DialBuilderExtensions
             .ServiceProvider.GetRequiredService<ResourceLoggerService>()
             .GetLogger(dial);
 
-        var configJson = new ContainerFile { Name = "config.json", Contents = dial.ToJson() };
+        var dialConfig = dial.ToDescriptor();
+        dial.Overrides?.Invoke(dialConfig);
+
+        var dialConfigJson = DescriptorExtensions.ToJson(dialConfig);
+
+        var configJson = new ContainerFile { Name = "config.json", Contents = dialConfigJson };
         logger.LogInformation("Adding config.json:");
         logger.LogInformation("{ConfigJson}", configJson.Contents);
 
@@ -238,5 +243,20 @@ public static class DialBuilderExtensions
             "THEMES_CONFIG_HOST",
             $"{themesResource.PrimaryEndpoint.Scheme}://{themesResource.Name}:{themesResource.PrimaryEndpoint.TargetPort}"
         );
+    }
+
+    /// <summary>
+    /// Configures the DIAL deployment descriptor with the specified overrides.
+    /// <see ref="https://github.com/epam/ai-dial-core/blob/development/sample/aidial.config.json"/>
+    /// </summary>
+    public static IResourceBuilder<DialResource> Configure(
+        this IResourceBuilder<DialResource> builder,
+        Action<DialDeploymentDescriptor> overrides
+    )
+    {
+        ArgumentNullException.ThrowIfNull(overrides);
+        builder.Resource.Overrides = overrides;
+
+        return builder;
     }
 }

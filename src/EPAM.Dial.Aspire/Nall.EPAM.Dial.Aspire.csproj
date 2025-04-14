@@ -1,15 +1,13 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <TargetFramework>net9.0</TargetFramework>
-    <ImplicitUsings>enable</ImplicitUsings>
-    <Nullable>enable</Nullable>
+    <RootNamespace>EPAM.Dial.Aspire</RootNamespace>
   </PropertyGroup>
 
   <PropertyGroup Label="Package">
     <Product>Nall.Epam.Dial.Aspire</Product>
     <Description>Aspire support for EPAM Dial</Description>
-    <PackageTags>$(PackageTags);aspire;cloud-native</PackageTags>
+    <PackageTags>$(PackageTags);aspire;cloud-native;dial</PackageTags>
   </PropertyGroup>
 
   <ItemGroup>
