@@ -1,10 +1,6 @@
 @Api_HostAddress = http://localhost:5181
 
-###
 GET {{Api_HostAddress}}/chat?query=Test
 Accept: application/json
 
 ###
-
-GET {{Api_HostAddress}}/chat-assistant?query='Add Milk'
-Accept: application/json

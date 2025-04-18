@@ -9,4 +9,9 @@
     <Project Path="GettingStarted_OpenAI/AppHost/AppHost.csproj" />
     <Project Path="GettingStarted_OpenAI/ServiceDefaults/ServiceDefaults.csproj" />
   </Folder>
+  <Folder Name="/GettingStarted_Application/">
+    <Project Path="GettingStarted_Application/Api/Api.csproj" />
+    <Project Path="GettingStarted_Application/AppHost/AppHost.csproj" />
+    <Project Path="GettingStarted_Application/ServiceDefaults/ServiceDefaults.csproj" />
+  </Folder>
 </Solution>

@@ -3,6 +3,7 @@ namespace Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.AI;
 using Microsoft.Extensions.DependencyInjection;
 using OpenAI;
+using OpenAI.Chat;
 
 /// <summary>
 /// Extension methods for configuring the <see cref="IChatClient" /> from an <see cref="OpenAIClient"/>
@@ -44,20 +45,16 @@ public static class AspireDialChatClientExtensions
     /// Note that this doesn't use ".UseOpenTelemetry()" because the order of the clients would be incorrect.
     /// We want the telemetry client to be the innermost client, right next to the inner <see cref="OpenAIClient"/>.
     /// </summary>
-    private static OpenAIChatClient CreateInnerChatClient(
+    private static IChatClient CreateInnerChatClient(
         IServiceProvider services,
         AspireDialApiClientBuilder builder
     )
     {
         if (!string.IsNullOrWhiteSpace(builder.ServiceKey))
         {
-            var client = services.GetRequiredKeyedService<OpenAIClient>(builder.ServiceKey);
-            return new OpenAIChatClient(client, builder.SelectedModel);
+            return services.GetRequiredKeyedService<ChatClient>(builder.ServiceKey).AsIChatClient();
         }
 
-        return new OpenAIChatClient(
-            services.GetRequiredService<OpenAIClient>(),
-            builder.SelectedModel
-        );
+        return services.GetRequiredKeyedService<ChatClient>(builder.ServiceKey).AsIChatClient();
     }
 }

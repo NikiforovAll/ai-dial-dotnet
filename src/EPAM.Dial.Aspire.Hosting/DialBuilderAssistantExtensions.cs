@@ -148,7 +148,7 @@ public static class DialBuilderAssistantExtensions
         builder.Resource.PrimaryEndpoint = resource.Resource.GetEndpoint(endpointName);
         builder.Resource.Path = path;
 
-        builder.WithRelationship(resource.Resource, "consumes");
+        resource.WithReferenceRelationship(builder.Resource.Parent);
 
         return builder;
     }

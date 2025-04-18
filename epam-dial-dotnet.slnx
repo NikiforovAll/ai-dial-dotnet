@@ -7,5 +7,6 @@
   <Folder Name="/src/">
     <Project Path="src/EPAM.Dial.Aspire.Hosting/Nall.EPAM.Dial.Aspire.Hosting.csproj" />
     <Project Path="src/EPAM.Dial.Aspire/Nall.EPAM.Dial.Aspire.csproj" />
+    <Project Path="src/EPAM.Dial.AspNetCore.Sdk/Nall.EPAM.Dial.AspNetCore.Sdk.csproj" />
   </Folder>
 </Solution>

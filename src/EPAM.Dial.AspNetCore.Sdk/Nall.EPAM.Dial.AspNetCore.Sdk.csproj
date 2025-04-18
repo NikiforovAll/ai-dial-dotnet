@@ -1,0 +1,16 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <RootNamespace>EPAM.Dial.AspNetCore.Sdk</RootNamespace>
+  </PropertyGroup>
+
+  <PropertyGroup Label="Package">
+    <Product>Nall.EPAM.Dial.AspNetCore.Sdk</Product>
+    <Description>AspNetCore DIAL support to write DIAL-compatible applications.</Description>
+    <PackageTags>$(PackageTags);cloud-native;dial</PackageTags>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <FrameworkReference Include="Microsoft.AspNetCore.App" />
+  </ItemGroup>
+
+</Project>

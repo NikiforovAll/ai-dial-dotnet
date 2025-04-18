@@ -7,6 +7,7 @@ using Microsoft.Extensions.AI;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using OpenAI;
+using OpenAI.Chat;
 
 /// <summary>
 /// Extension methods for setting up Dial client in an <see cref="IHostApplicationBuilder"/>.
@@ -128,19 +129,25 @@ public static class AspireDialExtensions
 
         if (serviceKey is not null)
         {
-            builder.Services.AddKeyedSingleton(serviceKey, (sp, _) => ConfigureDialClient(sp));
+            builder.Services.AddKeyedSingleton(
+                serviceKey,
+                (sp, _) => ConfigureDialClient(sp, settings.SelectedModel)
+            );
         }
         else
         {
             builder.Services.AddSingleton(ConfigureDialClient);
 
             serviceKey = $"{connectionName}_DialApiClient_internal";
-            builder.Services.AddKeyedSingleton(serviceKey, (sp, _) => ConfigureDialClient(sp));
+            builder.Services.AddKeyedSingleton(
+                serviceKey,
+                (sp, _) => ConfigureDialClient(sp, settings.SelectedModel)
+            );
         }
 
         return new AspireDialApiClientBuilder(builder, serviceKey, settings.SelectedModel);
 
-        OpenAIClient ConfigureDialClient(IServiceProvider serviceProvider)
+        ChatClient ConfigureDialClient(IServiceProvider serviceProvider, string selectedModel)
         {
             var httpClient = serviceProvider
                 .GetRequiredService<IHttpClientFactory>()
@@ -169,7 +176,11 @@ public static class AspireDialExtensions
                 Transport = new HttpClientPipelineTransport(httpClient),
             };
 
-            var client = new OpenAIClient(new ApiKeyCredential(settings.Key), options);
+            var client = new ChatClient(
+                selectedModel,
+                new ApiKeyCredential(settings.Key ?? string.Empty),
+                options
+            );
 
             return client;
         }
