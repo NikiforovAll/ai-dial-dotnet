@@ -6,5 +6,5 @@ Accept: application/json
 
 ###
 
-GET {{Api_HostAddress}}/chat-assistant?query=Test
+GET {{Api_HostAddress}}/chat-assistant?query='Add Milk'
 Accept: application/json

@@ -18,19 +18,9 @@ var openai = builder
         var account = resources.OfType<CognitiveServicesAccount>().Single();
         account.Properties.DisableLocalAuth = false; // so we can use api key
     });
-var gpt4 = openai.AddDeployment("gpt-4", "gpt-4", "1106-Preview");
-gpt4.Resource.SkuCapacity = 1;
 var gpt4o = openai.AddDeployment("gpt-4o", "gpt-4o", "2024-08-06");
 
-var dial = builder.AddDial("dial", port: 8080).WithChatUI(port: 3000).WaitFor(gpt4o).WaitFor(gpt4);
-
-var dialGpt4 = dial.AddOpenAIModelAdapter("dial-gpt-4", deploymentName: "gpt-4")
-    .WithUpstream(gpt4, openAIApiKey)
-    .WithDisplayName("gpt-4")
-    .WithDescription(
-        "This is the GPT-4 Turbo with Vision GA model. The context window is 128,000 tokens, and it can return up to 4,096 output tokens. The training data is current up to December 2023."
-    )
-    .WithWellKnownIcon(WellKnownIcon.GPT4);
+var dial = builder.AddDial("dial", port: 8080).WithChatUI(port: 3000).WaitFor(gpt4o);
 
 var dialGpt4o = dial.AddOpenAIModelAdapter("dial-gpt-4o", deploymentName: "gpt-4o")
     .WithUpstream(gpt4o, openAIApiKey)
@@ -49,7 +39,9 @@ var todoAddon = dial.AddAddon("todo-addon")
     .WithDisplayName("TODO List")
     .WithDescription("Addon that allows to manage user's TODO list.");
 
-var todoAssistant = dial.AddAssistantsBuilder()
+var assistantBuilder = dial.AddAssistantsBuilder()
+    .WithImage("nikiforovall/ai-dial-assistant", "8.0.1-rc");
+var todoAssistant = assistantBuilder
     .AddAssistant("todo-assistant")
     .WithPrompt(
         "You are assistant that helps to manage TODO list for the user. You can add, remove and view your TODOs."
@@ -65,7 +57,6 @@ builder
     .WithReference(todoAssistant)
     .WithReference(dialGpt4o)
     .WithReference(gpt4o)
-    .WithReference(gpt4)
     .WaitFor(dial);
 
 builder.Build().Run();

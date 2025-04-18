@@ -178,7 +178,7 @@ public static class AspireDialExtensions
 
             var client = new ChatClient(
                 selectedModel,
-                new ApiKeyCredential(settings.Key!),
+                new ApiKeyCredential(settings.Key ?? string.Empty),
                 options
             );
 
