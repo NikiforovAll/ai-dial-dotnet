@@ -73,6 +73,8 @@ public static class DialBuilderModelExtensions
     )
     {
         builder.Resource.Upstreams.Add((resourceBuilder.Resource, key?.Resource?.Value));
+
+        builder.WithReferenceRelationship(resourceBuilder.Resource);
         return builder;
     }
 
